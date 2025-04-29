@@ -6,10 +6,9 @@ export const Activityelement = () => {
   return (
     <div>
         <ActivityProvider>
-                {/* <Role/> */}
-                
-                <Activitytable/>
-            </ActivityProvider>
+            {/* <Role/> */}
+            <Activitytable/>
+        </ActivityProvider>
     </div>
   )
 }

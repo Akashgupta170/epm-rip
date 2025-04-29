@@ -23,7 +23,7 @@ export const ClientProvider = ({ children }) => {
     setIsLoading(true);
     setMessage("");
     try {
-        const clientData = { 
+        const clientData = {
             client_type: clienttype,
             name,
             contact_detail: contactDetail

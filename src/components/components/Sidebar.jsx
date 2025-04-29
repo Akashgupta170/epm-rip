@@ -24,6 +24,7 @@ import {
   FolderKey,
   Folders
 } from "lucide-react";
+import AccessoryCategory from "../pages/hr/Accessories/AccessoryCategory";
 export function Sidebar() {
   const [openMenus, setOpenMenus] = useState({});
   const { logout } = useAuth();
@@ -58,8 +59,9 @@ export function Sidebar() {
       { name: "Dashboard", path: "/hr/dashboard", icon: <House /> },
       { name: "Employee Management", path: "/hr/employees", icon: <ContactRound /> },
       { name: "Leave Management", path: "/hr/leaves",icon: <CalendarCheck /> },
-      // { name: "Accessories", path: "/hr/add-accessories",icon: <CalendarCheck /> },
-      // { name: "accessories Management", path: "/hr/accessories",icon: <CalendarCheck /> },
+      { name: "Accessory category", path: "/hr/accessory/category",icon: <CalendarCheck /> },
+      { name: "Accessories", path: "/hr/add-accessories",icon: <CalendarCheck /> },
+      { name: "accessories Management", path: "/hr/accessories",icon: <CalendarCheck /> },
     ],
     [Roles.PM]: [
       { name: "Dashboard", path: "/projectmanager/dashboard", icon: <House /> },
