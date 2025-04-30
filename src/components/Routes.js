@@ -44,7 +44,9 @@ import EmployeeDetail from "./pages/superadmin/employee/EmployeeDetail";
 import ProjectManagerDashboard from "./pages/Pm/ProjectManagerDashboard";
 import Accessories from "./pages/hr/Accessories/Accessories";
 import AddAccessories from "./pages/hr/Accessories/AddAccessories";
-import AccessoryCategory from "./pages/hr/Accessories/AccessoryCategory";
+import {Category} from "./pages/hr/Categories/Category";
+import { CategoryProvider } from "./context/CategoryContext";
+import { Categoryelements } from "./pages/hr/Categories/Categoryelements";
 // import EmployeeDetailHrEmployeeDetail from "./pages/hr/Employee/HrEmployeeDetail";
 const RoleBasedRoute = ({ element, allowedRoles }) => {
   // const { user } = useAuth();
@@ -248,12 +250,16 @@ const AppRoutes = () => {
             element={<RoleBasedRoute element={<Accessories />} allowedRoles={["hr"]} />}
           />
           <Route
-            path="/hr/add-accessories"
+            path="/hr/add-accessories/:id"
             element={<RoleBasedRoute element={<AddAccessories />} allowedRoles={["hr"]} />}
           />
           <Route
             path="/hr/accessory/category"
-            element={<RoleBasedRoute element={<AccessoryCategory />} allowedRoles={["hr"]} />}
+            element={
+              <CategoryProvider>
+                <RoleBasedRoute element={<Categoryelements />} allowedRoles={["hr"]}/>
+              </CategoryProvider>
+            }
           />
           <Route
             path="/team/dashboard"

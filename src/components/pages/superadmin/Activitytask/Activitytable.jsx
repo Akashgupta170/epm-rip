@@ -59,13 +59,6 @@ export const Activitytable = () => {
       <SectionHeader icon={BarChart} title="Activity Tags Management" subtitle="Manage employees and update details" />
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 sticky top-0 bg-white z-10 shadow-md">
         <Activity />
-        {/* <div>
-          <h2 className="text-xl font-semibold text-gray-800">Activity Tags Management</h2>
-          <p className="text-sm text-gray-500 mt-1">View, edit and manage user Tags</p>
-        </div>
-        <div className="my-2">
-        <Activity />
-        </div> */}
       </div>
 
       <div className="max-w-full overflow-x-auto">

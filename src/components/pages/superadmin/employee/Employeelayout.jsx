@@ -7,13 +7,12 @@ export const Employeelayout = () => {
   return (
     <div>
         <EmployeeProvider>
-   <TeamProvider>
-    <RoleProvider>
-                <Manageemployess/>
-                </RoleProvider>
-                </TeamProvider>
-            </EmployeeProvider>
-  
+          <TeamProvider>
+            <RoleProvider>
+              <Manageemployess/>
+            </RoleProvider>
+          </TeamProvider>
+        </EmployeeProvider>
     </div>
   )
 }

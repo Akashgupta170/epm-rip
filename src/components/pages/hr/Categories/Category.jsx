@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { useRole } from "../../../context/RoleContext";
+import { useCategory } from "../../../context/CategoryContext";
 import { Loader2, X } from "lucide-react";
 import { EditButton, SaveButton, CancelButton, YesButton, DeleteButton, ExportButton, ImportButton, ClearButton, CloseButton, SubmitButton, IconApproveButton, IconRejectButton, IconCancelTaskButton, IconSaveButton, IconDeleteButton, IconEditButton, IconViewButton, } from "../../../AllButtons/AllButtons";
 
 
-export const Role = () => {
-  const { addRole, isLoading, message } = useRole();
-  const [roleName, setRoleName] = useState("");
+export const Category = () => {
+  const { addCategory, isLoading, message } = useCategory();
+  const [categoryName, setCategoryName] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (roleName.trim()) {
-      await addRole(roleName);
-      setRoleName(""); // Reset input after submission
+    if (categoryName.trim()) {
+      await addCategory(categoryName);
+      setCategoryName("");
       setShowMessage(true);
       setIsModalOpen(false);
     }
@@ -25,7 +25,7 @@ export const Role = () => {
         onClick={() => setIsModalOpen(true)}
         className="add-items-btn"
       >
-        Add Role
+        Add Category
       </button>
 
       {isModalOpen && (
@@ -38,8 +38,8 @@ export const Role = () => {
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-xl font-semibold text-gray-800">Enter Role Details</h2>
-            <p className="text-sm text-gray-500 mt-1">Add a new role to the system</p>
+            <h2 className="text-xl font-semibold text-gray-800">Enter Category </h2>
+            <p className="text-sm text-gray-500 mt-1">Add a new Category </p>
 
             {showMessage && message && (
               <div
@@ -54,15 +54,15 @@ export const Role = () => {
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               <div>
-                <label htmlFor="role" className="block font-medium text-gray-700 text-sm">
-                  Role Name
+                <label htmlFor="categoryName" className="block font-medium text-gray-700 text-sm">
+                  Category Name
                 </label>
                 <input
-                  id="role"
-                  placeholder="Enter new Role"
+                  id="categoryName"
+                  placeholder="Enter new Category"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  value={roleName}
-                  onChange={(e) => setRoleName(e.target.value)}
+                  value={categoryName}
+                  onChange={(e) => setCategoryName(e.target.value)}
                 />
               </div>
               <SubmitButton disabled={isLoading} />
