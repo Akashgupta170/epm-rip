@@ -8,9 +8,7 @@ export const EmployeeProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { showAlert } = useAlert();
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
+
   const fetchEmployees = async () => {
     try {
       const token = localStorage.getItem("userToken");
@@ -38,6 +36,9 @@ export const EmployeeProvider = ({ children }) => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
   const addEmployee = async (employeeData) => {
     try {
       const token = localStorage.getItem("userToken");

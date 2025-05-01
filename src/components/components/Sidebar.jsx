@@ -75,6 +75,7 @@ export function Sidebar() {
       { name: "Projects Assigned", path: "/team/projects-assigned", icon: <FileSpreadsheet /> },
       { name: "Performance Sheet", path: "/team/performance-sheet", icon: <FileChartLine /> },
       { name: "Performance History", path: "/team/performance-sheet-History", icon: <FileClock /> },
+      { name: "Accessory", path: "/team/accessory",icon: <CalendarHeart />  },
       { name: "Leaves", path: "/team/leaves",icon: <CalendarHeart />  },
     ],
   };

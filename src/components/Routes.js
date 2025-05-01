@@ -42,11 +42,13 @@ import Emptask from "./pages/employee/Emptask/Emptask";
 import { Activityelement } from "./pages/superadmin/Activitytask/Activityelement";
 import EmployeeDetail from "./pages/superadmin/employee/EmployeeDetail";
 import ProjectManagerDashboard from "./pages/Pm/ProjectManagerDashboard";
-import Accessories from "./pages/hr/Accessories/Accessories";
+import {Accessoryelements} from "./pages/hr/Accessories/Accessoryelemets";
 import AddAccessories from "./pages/hr/Accessories/AddAccessories";
-import {Category} from "./pages/hr/Categories/Category";
+// import {Category} from "./pages/hr/Categories/Category";
 import { CategoryProvider } from "./context/CategoryContext";
+import { AssignAccessoryProvider } from "./context/AssignAccessoryContext";
 import { Categoryelements } from "./pages/hr/Categories/Categoryelements";
+import Accessory from "./pages/employee/Accessory/Accessory";
 // import EmployeeDetailHrEmployeeDetail from "./pages/hr/Employee/HrEmployeeDetail";
 const RoleBasedRoute = ({ element, allowedRoles }) => {
   // const { user } = useAuth();
@@ -116,6 +118,7 @@ const AppRoutes = () => {
                 </BDProjectsAssignedProvider>
             }
           />
+
 
 
 
@@ -247,7 +250,11 @@ const AppRoutes = () => {
           />
           <Route
             path="/hr/accessories"
-            element={<RoleBasedRoute element={<Accessories />} allowedRoles={["hr"]} />}
+            element={
+              <AssignAccessoryProvider>
+                <RoleBasedRoute element={<Accessoryelements />} allowedRoles={["hr"]} />
+              </AssignAccessoryProvider>
+            }
           />
           <Route
             path="/hr/add-accessories/:id"
@@ -287,6 +294,12 @@ const AppRoutes = () => {
               <UserProvider>
                 <RoleBasedRoute element={<EmpSheetHistory/>} allowedRoles={["team"]} />
               </UserProvider>
+            }
+          />
+          <Route
+            path="/team/accessory"
+            element={
+                <RoleBasedRoute element={<Accessory/>} allowedRoles={["team"]} />
             }
           />
           <Route

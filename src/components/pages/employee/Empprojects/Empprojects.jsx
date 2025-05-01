@@ -87,20 +87,6 @@ function App() {
       <SectionHeader icon={BarChart} title="Projects Assigned" subtitle="Track and manage your assigned projects efficiently with our intuitive dashboard." />
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center p-2 bg-white rounded-2xl shadow-md mb-6">
-            <Briefcase className="w-12 h-12 text-blue-600 mr-3 transform transition-transform group-hover:rotate-12" />
-            <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800">
-              Projects Assigned
-            </h1>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="h-1.5 w-32 bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 rounded-full mb-6"></div>
-            <p className="mt-3 text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Track and manage your assigned projects efficiently with our intuitive dashboard.
-            </p>
-          </div>
-        </div> */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {Array.isArray(userassignedProjects) && userassignedProjects.length > 0 ? (
             userassignedProjects.map(project => <ProjectCard key={project.id} project={project} />)

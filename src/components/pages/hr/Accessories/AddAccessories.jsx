@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Plus, X, BarChart, Trash2 } from "lucide-react";
 import { SectionHeader } from "../../../components/SectionHeader";
+import { API_URL } from "../../../utils/ApiConfig";
 
 // Header Component
 const Header = ({ onAddClick }) => (
@@ -28,7 +30,9 @@ const AccessoryCard = ({ item, onDelete }) => (
       <Trash2 size={18} />
     </button>
     <div className="flex justify-between items-center mb-2">
-      <h2 className="text-xl font-semibold text-gray-800">{item.model}</h2>
+     <div>
+      <h2 className="text-xl font-semibold text-gray-800">Model : {item.model}</h2>
+     </div>
       <span
         className={`text-sm px-2 py-1 rounded-full ${
           item.status === "Available" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
@@ -39,9 +43,9 @@ const AccessoryCard = ({ item, onDelete }) => (
     </div>
     <div className="text-sm text-gray-600 space-y-1">
       <p><strong>Accessory No:</strong> {item.accessory_no}</p>
-      <p><strong>Category ID:</strong> {item.category.name}</p>
+      <p><strong>Category:</strong> {item.category?.name || "N/A"}</p>
       <p><strong>Condition:</strong> {item.condition}</p>
-      <p><strong>Issue Date:</strong> {item.issue_date}</p>
+      {/* <p><strong>Issue Date:</strong> {item.issue_date}</p> */}
       <p><strong>Note:</strong> {item.note}</p>
     </div>
     <div className="mt-4 text-xs text-gray-400 flex justify-between">
@@ -53,6 +57,8 @@ const AccessoryCard = ({ item, onDelete }) => (
 
 // Modal Component
 const Modal = ({ isOpen, onClose, onSave }) => {
+  const { id } = useParams();
+
   const [formData, setFormData] = useState({
     category_id: "",
     accessory_no: "",
@@ -62,6 +68,15 @@ const Modal = ({ isOpen, onClose, onSave }) => {
     note: "",
     status: "Available",
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData((prev) => ({
+        ...prev,
+        category_id: id || "",
+      }));
+    }
+  }, [isOpen, id]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -86,9 +101,19 @@ const Modal = ({ isOpen, onClose, onSave }) => {
         </button>
         <h2 className="text-xl font-semibold mb-4">Add New Accessory</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {["category_id", "accessory_no", "model", "condition"].map((field) => (
+          <div>
+            <label className="block text-sm font-medium">Category ID</label>
+            <input
+              type="text"
+              name="category_id"
+              value={formData.category_id}
+              readOnly
+              className="w-full border rounded-md px-3 py-2 bg-gray-100"
+            />
+          </div>
+          {["accessory_no", "model", "condition"].map((field) => (
             <div key={field}>
-              <label className="block text-sm font-medium">{field.replace("_", " ")}</label>
+              <label className="block text-sm font-medium capitalize">{field.replace("_", " ")}</label>
               <input
                 type="text"
                 name={field}
@@ -100,7 +125,7 @@ const Modal = ({ isOpen, onClose, onSave }) => {
             </div>
           ))}
           <div>
-            <label className="block text-sm font-medium">Issue Date</label>
+          <label className="block text-sm font-medium">Issue Date</label>
             <input
               type="date"
               name="issue_date"
@@ -129,7 +154,7 @@ const Modal = ({ isOpen, onClose, onSave }) => {
             >
               <option value="Available">Available</option>
               <option value="Out of Stock">Out of Stock</option>
-              <option value="approved">approved</option>
+              <option value="approved">Approved</option>
             </select>
           </div>
           <div className="flex justify-end">
@@ -147,17 +172,19 @@ const Modal = ({ isOpen, onClose, onSave }) => {
 const AddAccessories = () => {
   const [accessories, setAccessories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const token = localStorage.getItem('userToken');
+  const token = localStorage.getItem("userToken");
+  const { id } = useParams();
 
-  const fetchAccessories = async () => {
+  const fetchAccessories = async (categoryId) => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/getaccessory",{
-          headers: { Authorization: `Bearer ${token}` },
+      const res = await axios.get(`${API_URL}/api/getaccessory/${categoryId}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(res.data)
-      setAccessories(res.data);
+      console.log("Fetched accessories:", res.data);
+      setAccessories(res.data.data || []);
     } catch (err) {
       console.error("Error fetching accessories:", err);
+      setAccessories([]); // fallback in case of error
     }
   };
 
@@ -165,7 +192,7 @@ const AddAccessories = () => {
 
   const handleSaveAccessory = async (newAccessory) => {
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/addaccessory", newAccessory,{
+      const res = await axios.post(`${API_URL}/api/addaccessory`, newAccessory, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAccessories((prev) => [...prev, res.data]);
@@ -177,7 +204,7 @@ const AddAccessories = () => {
   const handleDeleteAccessory = async (id) => {
     if (window.confirm("Are you sure you want to delete this accessory?")) {
       try {
-        await axios.delete(`http://127.0.0.1:8000/api/deleteaccessory/${id}`,{
+        await axios.delete(`${API_URL}/deleteaccessory/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAccessories((prev) => prev.filter((acc) => acc.id !== id));
@@ -188,17 +215,17 @@ const AddAccessories = () => {
   };
 
   useEffect(() => {
-    fetchAccessories();
-  }, []);
+    if (id) fetchAccessories(id);
+  }, [id]);
 
   return (
     <div>
       <Header onAddClick={handleAddClick} />
       <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {accessories.map((item) => (
-            <AccessoryCard key={item.id} item={item} onDelete={handleDeleteAccessory} />
-          ))}
+          {Array.isArray(accessories) && accessories.map((item) => (
+              <AccessoryCard key={item.id} item={item} onDelete={handleDeleteAccessory} />
+            ))}
         </div>
       </main>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={handleSaveAccessory} />
