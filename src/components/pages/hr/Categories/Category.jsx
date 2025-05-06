@@ -1,19 +1,29 @@
 import React, { useState } from "react";
 import { useCategory } from "../../../context/CategoryContext";
-import { Loader2, X } from "lucide-react";
-import { EditButton, SaveButton, CancelButton, YesButton, DeleteButton, ExportButton, ImportButton, ClearButton, CloseButton, SubmitButton, IconApproveButton, IconRejectButton, IconCancelTaskButton, IconSaveButton, IconDeleteButton, IconEditButton, IconViewButton, } from "../../../AllButtons/AllButtons";
-
+import { X } from "lucide-react";
+import { SubmitButton } from "../../../AllButtons/AllButtons";
 
 export const Category = () => {
   const { addCategory, isLoading, message } = useCategory();
+
   const [categoryName, setCategoryName] = useState("");
+  const [categoryCode, setCategoryCode] = useState("");
+  const [instock, setInstock] = useState(""); // Corrected to 'instock'
   const [showMessage, setShowMessage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (categoryName.trim()) {
-      await addCategory(categoryName);
+    if (categoryName.trim() && categoryCode.trim() && instock !== "") {
+      await addCategory({
+        name: categoryName,
+        category_code: categoryCode,
+        instock: parseInt(instock, 10),
+      });
+
       setCategoryName("");
+      setCategoryCode("");
+      setInstock("");
       setShowMessage(true);
       setIsModalOpen(false);
     }
@@ -38,14 +48,14 @@ export const Category = () => {
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-xl font-semibold text-gray-800">Enter Category </h2>
-            <p className="text-sm text-gray-500 mt-1">Add a new Category </p>
+            <h2 className="text-xl font-semibold text-gray-800">Enter Category</h2>
+            <p className="text-sm text-gray-500 mt-1">Add a new Category</p>
 
             {showMessage && message && (
               <div
                 className={`mt-4 p-3 rounded-md text-sm font-medium text-center ${message.includes("successfully")
-                    ? "bg-green-50 text-green-800 border border-green-300"
-                    : "bg-red-50 text-red-800 border border-red-300"
+                  ? "bg-green-50 text-green-800 border border-green-300"
+                  : "bg-red-50 text-red-800 border border-red-300"
                   }`}
               >
                 {message}
@@ -59,12 +69,40 @@ export const Category = () => {
                 </label>
                 <input
                   id="categoryName"
-                  placeholder="Enter new Category"
+                  placeholder="like Laptop, Mouse"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   value={categoryName}
                   onChange={(e) => setCategoryName(e.target.value)}
                 />
               </div>
+
+              <div>
+                <label htmlFor="categoryCode" className="block font-medium text-gray-700 text-sm">
+                  Category Code
+                </label>
+                <input
+                  id="categoryCode"
+                  placeholder="Like L-tas"
+                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  value={categoryCode}
+                  onChange={(e) => setCategoryCode(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="instock" className="block font-medium text-gray-700 text-sm">
+                  In Stock
+                </label>
+                <input
+                  type="number"
+                  id="instock"
+                  placeholder="Enter quantity"
+                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  value={instock}
+                  onChange={(e) => setInstock(e.target.value)}
+                />
+              </div>
+
               <SubmitButton disabled={isLoading} />
             </form>
           </div>

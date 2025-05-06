@@ -36,11 +36,15 @@ export const CategoryProvider = ({ children }) => {
     }
   }, [token]);
 
-  const addCategory = async (name) => {
+  const addCategory = async ({ name, category_code,instock }) => {
     try {
-      await axios.post(`${API_URL}/api/addaccessorycategory`, { name }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(`${API_URL}/api/addaccessorycategory`,
+        { name, category_code,instock },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
       showAlert("success", "Category Added", `${name} was added successfully`);
       fetchCategories();
     } catch (error) {
@@ -48,9 +52,9 @@ export const CategoryProvider = ({ children }) => {
     }
   };
 
-  const updateCategory = async (id, name) => {
+  const updateCategory = async (id, name, category_code,instock) => {
     try {
-      await axios.put(`${API_URL}/api/updateaccessorycategory/${id}`, { name }, {
+      await axios.put(`${API_URL}/api/updateaccessorycategory/${id}`, { name, category_code,instock },{
         headers: { Authorization: `Bearer ${token}` },
       });
       showAlert("success", "Category Updated", `${name} was updated successfully`);

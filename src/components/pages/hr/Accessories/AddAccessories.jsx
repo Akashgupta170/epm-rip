@@ -16,7 +16,7 @@ const Header = ({ onAddClick }) => (
           onClick={onAddClick}
           className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
         >
-          <Plus size={18} className="mr-2" /> Add Accessory
+        <Plus size={18} className="mr-2" /> Add Accessory
         </button>
       </div>
     </div>
@@ -31,11 +31,11 @@ const AccessoryCard = ({ item, onDelete }) => (
     </button>
     <div className="flex justify-between items-center mb-2">
      <div>
-      <h2 className="text-xl font-semibold text-gray-800">Model : {item.model}</h2>
+      <h2 className="text-xl font-semibold text-gray-800">Model : {item.name}</h2>
      </div>
       <span
         className={`text-sm px-2 py-1 rounded-full ${
-          item.status === "Available" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+          item.status === "available" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
         }`}
       >
         {item.status}
@@ -175,9 +175,9 @@ const AddAccessories = () => {
   const token = localStorage.getItem("userToken");
   const { id } = useParams();
 
-  const fetchAccessories = async (categoryId) => {
+  const fetchAccessories = async (id) => {
     try {
-      const res = await axios.get(`${API_URL}/api/getaccessory/${categoryId}`, {
+      const res = await axios.get(`${API_URL}/api/getaccessory/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log("Fetched accessories:", res.data);

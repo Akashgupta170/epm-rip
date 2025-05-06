@@ -1,179 +1,232 @@
 import React, { useEffect, useState } from "react";
-import { useAssignAccessory } from "../../../context/AssignAccessoryContext";
-import { Edit, Trash2, Loader2, BarChart } from "lucide-react";
-import { IconEditButton, IconDeleteButton, IconSaveButton, IconCancelTaskButton } from "../../../AllButtons/AllButtons";
-import { SectionHeader } from '../../../components/SectionHeader';
-import { useEmployees } from '../../../context/EmployeeContext';
-import { Accessories } from './Accessories';
+import { useAccessory } from "../../../context/AccessoryContext"; // Use only the AccessoryContext now
+import {
+  IconEditButton,
+  IconDeleteButton,
+  IconSaveButton,
+  IconCancelTaskButton,
+} from "../../../AllButtons/AllButtons";
+import { SectionHeader } from "../../../components/SectionHeader";
+import { Accessories } from "./Accessories";
 import { Alert } from "@material-tailwind/react";
-import Select from 'react-select';
-import axios from "axios";
-import { API_URL } from "../../../utils/ApiConfig";
+import { BarChart, Loader2 } from "lucide-react";
+import Select from "react-select";
+import { useParams } from "react-router-dom";
+import { useCategory } from "../../../context/CategoryContext";
 
-export const AssignAccessoryTable = () => {
-  const { accessoryAssign, loading, deleteAccessoryAssign, updateAccessoryAssign } = useAssignAccessory();
-  const [editAssignmentId, setEditAssignmentId] = useState(null);
+export const Accessorytable = () => {
+  const {
+    accessories,
+    deleteAccessory,
+    fetchAccessories,
+    updateAccessory,
+  } = useAccessory();
+  const { categories } = useCategory();
+  const { id } = useParams();
+
+    useEffect(() => {
+      if (id) fetchAccessories(id);
+    }, [id]);
+
+  const [editAccessoryId, setEditAccessoryId] = useState(null);
   const [editFormData, setEditFormData] = useState({});
-  const { employees, fetchEmployees } = useEmployees();
-  const [accessories, setAccessories] = useState([]);
+  const [alert, setAlert] = useState({
+    show: false,
+    variant: "",
+    title: "",
+    message: "",
+  });
 
   useEffect(() => {
-    fetchAccessories();
-  }, []);
-
-  const fetchAccessories = async () => {
-    try {
-      const token = localStorage.getItem("userToken");
-      const res = await axios.get(`${API_URL}/api/allaccessory`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setAccessories(res.data.data || []);
-    } catch (err) {
-      console.error("Error fetching accessories:", err);
-      setAccessories([]);
+    if (editAccessoryId) {
+      const accessory = accessories.find((item) => item.id === editAccessoryId);
+      setEditFormData({ ...accessory });
     }
-  };
-
-  useEffect(() => {
-    if (editAssignmentId) {
-      const assignment = accessoryAssign.find(item => item.id === editAssignmentId);
-      setEditFormData({ ...assignment });
-      fetchEmployees();
-    }
-  }, [editAssignmentId, accessoryAssign]);
+  }, [editAccessoryId, accessories]);
 
   const handleSaveClick = async () => {
-    if (!editFormData.user_id || !editFormData.accessory_id || !editFormData.assigned_at) return;
-    await updateAccessoryAssign(editAssignmentId, editFormData);
-    setEditAssignmentId(null);
-    fetchEmployees();
+    if (
+      !editFormData.name ||
+      !editFormData.category_id ||
+      !editFormData.vendor_name ||
+      !editFormData.condition ||
+      !editFormData.purchase_date ||
+      !editFormData.amount ||
+      !editFormData.status
+    )
+      return;
+
+    await updateAccessory(editAccessoryId, editFormData, editFormData.category_id);
+    setEditAccessoryId(null);
+  };
+
+  const handleDeleteClick = async (id) => {
+    await deleteAccessory(id);
   };
 
   return (
     <div className="relative rounded-2xl border border-gray-200 bg-white shadow-lg h-screen overflow-y-auto">
-      <SectionHeader icon={BarChart} title="Accessory assign" subtitle="Accessory assign and update details" />
+      <SectionHeader
+        icon={BarChart}
+        title="Accessories"
+        subtitle="Manage accessory details"
+      />
       <div className="p-4">
         {alert.show && (
           <Alert
             variant={alert.variant}
             title={alert.title}
             message={alert.message}
-            onClose={() => {}}
+            onClose={() => setAlert({ ...alert, show: false })}
           />
         )}
+
         <div className="flex flex-wrap items-center justify-between gap-4 p-4 sticky top-0 bg-white z-10 shadow-md">
           <Accessories />
         </div>
-        <table className="w-full mt-4">
+
+       <div className="w-full overflow-auto mt-4">
+       <table className="min-w-full table-auto">
           <thead>
             <tr className="table-bg-heading table-th-tr-row">
-              <th className="px-4 py-2 text-center">User</th>
-              <th className="px-4 py-2 text-center">Accessory</th>
-              <th className="px-4 py-2 text-center">Assigned At</th>
+              <th className="px-4 py-2 text-center">Accessory No</th>
+              <th className="px-4 py-2 text-center">Brand Name</th>
+              <th className="px-4 py-2 text-center">Category</th>
+              <th className="px-4 py-2 text-center">Vendor Name</th>
+              <th className="px-4 py-2 text-center">Condition</th>
+              <th className="px-4 py-2 text-center">Purchase Date</th>
+              <th className="px-4 py-2 text-center">Amount</th>
               <th className="px-4 py-2 text-center">Status</th>
               <th className="px-4 py-2 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="5" className="px-6 py-8 text-center">
-                  <div className="flex items-center justify-center">
-                    <Loader2 className="h-6 w-6 animate-spin text-blue-500 mr-2" />
-                    <span className="text-gray-500">Loading...</span>
-                  </div>
-                </td>
-              </tr>
-            ) : accessoryAssign.length > 0 ? (
-              accessoryAssign.map((assignment) => (
-                <tr key={assignment.id} className="border">
+            {accessories.length > 0 ? (
+              accessories.map((accessory) => (
+                <tr key={accessory.id} className="border">
+                  <td className="px-6 py-4 text-center">{accessory.accessory_no}</td>
                   <td className="px-6 py-4 text-center">
-                    {editAssignmentId === assignment.id ? (
-                      <div className="min-w-[200px]">
-                        <Select
-                          value={employees.find(emp => emp.id === parseInt(editFormData.user_id)) || null}
-                          onChange={(selected) =>
-                            setEditFormData({ ...editFormData, user_id: selected?.id.toString() })
-                          }
-                          options={employees}
-                          getOptionLabel={(e) => e.name}
-                          getOptionValue={(e) => e.id.toString()}
-                          placeholder="Select User"
-                          isClearable
-                        />
-                      </div>
-                    ) : (
-                      employees.find((emp) => emp.id === assignment.user_id)?.name || 'Unknown'
-                    )}
-                  </td>
-
-                  <td className="px-6 py-4 text-center">
-                    {editAssignmentId === assignment.id ? (
-                      <div className="min-w-[200px]">
-                        <Select
-                          value={
-                            accessories.find(
-                              (accessory) => accessory.id === parseInt(editFormData.accessory_id)
-                            ) || null
-                          }
-                          onChange={(selected) =>
-                            setEditFormData({ ...editFormData, accessory_id: selected?.id.toString() })
-                          }
-                          options={accessories}
-                          getOptionLabel={(e) => e.model} // show model name
-                          getOptionValue={(e) => e.id.toString()} // use accessory ID as value
-                          placeholder="Select Accessory"
-                          isClearable
-                        />
-                      </div>
-                    ) : (
-                      accessories.find(
-                        (accessory) => accessory.id === assignment.accessory_id
-                      )?.model || 'Unknown'
-                    )}
-                  </td>
-
-                  <td className="px-6 py-4 text-center">
-                    {editAssignmentId === assignment.id ? (
+                    {editAccessoryId === accessory.id ? (
                       <input
-                        type="date"
-                        value={editFormData.assigned_at}
-                        onChange={(e) => setEditFormData({ ...editFormData, assigned_at: e.target.value })}
+                        type="text"
+                        value={editFormData.brand_name}
+                        onChange={(e) =>
+                          setEditFormData({ ...editFormData, name: e.target.value })
+                        }
                         className="border border-gray-300 rounded-md p-2"
                       />
                     ) : (
-                      assignment.assigned_at
+                      accessory.brand_name
                     )}
                   </td>
-
                   <td className="px-6 py-4 text-center">
-                    {editAssignmentId === assignment.id ? (
-                      <select
-                        value={editFormData.status}
-                        onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
+                    {categories.find((cat) => cat.id === accessory.category_id)?.name || accessory.category.name}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {editAccessoryId === accessory.id ? (
+                      <input
+                        type="text"
+                        value={editFormData.vendor_name}
+                        onChange={(e) =>
+                          setEditFormData({ ...editFormData, vendor_name: e.target.value })
+                        }
                         className="border border-gray-300 rounded-md p-2"
-                      >
-                        <option value="assigned">Assigned</option>
-                        <option value="vacant">Vacant</option>
-                        <option value="in-repair">In-Repair</option>
-                        <option value="lost">Lost</option>
-                      </select>
+                      />
                     ) : (
-                      assignment.status
+                      accessory.vendor_name
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {editAccessoryId === accessory.id ? (
+                      <input
+                        type="text"
+                        value={editFormData.condition}
+                        onChange={(e) =>
+                          setEditFormData({ ...editFormData, condition: e.target.value })
+                        }
+                        className="border border-gray-300 rounded-md p-2"
+                      />
+                    ) : (
+                      accessory.condition
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {editAccessoryId === accessory.id ? (
+                      <input
+                        type="date"
+                        value={editFormData.purchase_date}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            purchase_date: e.target.value,
+                          })
+                        }
+                        className="border border-gray-300 rounded-md p-2"
+                      />
+                    ) : (
+                      accessory.purchase_date
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {editAccessoryId === accessory.id ? (
+                      <input
+                        type="number"
+                        value={editFormData.amount}
+                        onChange={(e) =>
+                          setEditFormData({ ...editFormData, amount: e.target.value })
+                        }
+                        className="border border-gray-300 rounded-md p-2"
+                      />
+                    ) : (
+                      accessory.amount
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-center min-w-[180px]">
+                    {editAccessoryId === accessory.id ? (
+                      <Select
+                        options={[
+                          { value: "available", label: "available" },
+                          { value: "in_use", label: "in use" },
+                          { value: "damaged", label: "damaged" },
+                          { value: "under_repair", label: "under repair" },
+                        ]}
+                        value={{
+                          value: editFormData.status,
+                          label:
+                            {
+                              available: "available",
+                              in_use: "in use",
+                              damaged: "damaged",
+                              under_repair: "under repair",
+                            }[editFormData.status] || editFormData.status,
+                        }}
+                        onChange={(selected) =>
+                          setEditFormData({ ...editFormData, status: selected.value })
+                        }
+                      />
+                    ) : (
+                      {
+                        available: "available",
+                        in_use: "in use",
+                        damaged: "damaged",
+                        under_repair: "under repair",
+                      }[accessory.status] || accessory.status
                     )}
                   </td>
 
                   <td className="px-6 py-4 text-center">
                     <div className="flex justify-center space-x-2">
-                      {editAssignmentId === assignment.id ? (
+                      {editAccessoryId === accessory.id ? (
                         <>
                           <IconSaveButton onClick={handleSaveClick} />
-                          <IconCancelTaskButton onClick={() => setEditAssignmentId(null)} />
+                          <IconCancelTaskButton onClick={() => setEditAccessoryId(null)} />
                         </>
                       ) : (
                         <>
-                          <IconEditButton onClick={() => setEditAssignmentId(assignment.id)} />
-                          <IconDeleteButton onClick={() => deleteAccessoryAssign(assignment.id)} />
+                          <IconEditButton onClick={() => setEditAccessoryId(accessory.id)} />
+                          <IconDeleteButton
+                            onClick={() => handleDeleteClick(accessory.id)}
+                          />
                         </>
                       )}
                     </div>
@@ -182,11 +235,15 @@ export const AssignAccessoryTable = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="px-6 py-8 text-center">No Assignments Found</td>
+                <td colSpan="10" className="px-6 py-8 text-center">
+                  No Accessories Found
+                </td>
               </tr>
             )}
           </tbody>
+
         </table>
+       </div>
       </div>
     </div>
   );

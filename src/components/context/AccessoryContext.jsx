@@ -1,5 +1,7 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { useAlert } from "./AlertContext";
+import { API_URL } from "../utils/ApiConfig";
+import { useParams } from "react-router-dom";
 
 const AccessoryContext = createContext();
 
@@ -7,121 +9,150 @@ export const AccessoryProvider = ({ children }) => {
   const [accessories, setAccessories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentCategoryId, setCurrentCategoryId] = useState(null);
   const { showAlert } = useAlert();
+ 
 
-  useEffect(() => {
-    fetchAccessories();
-  }, []);
-
-  // 📦 Fetch Accessories
-  const fetchAccessories = async () => {
+  const fetchAccessories = async (id) => {
+    if (!id) {
+      setError("Missing category ID");
+      return;
+    }
+  
+    setLoading(true);
+    setCurrentCategoryId(id);
+  
     try {
       const token = localStorage.getItem("userToken");
       if (!token) {
         setError("Unauthorized");
         return;
       }
-
-      const response = await fetch(`http://127.0.0.1:8000/api/getaccessory`, {
+  
+      console.log("Fetching accessories for category ID:", id);
+  
+      const response = await fetch(`${API_URL}/api/getaccessory/${id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-
-      if (!response.ok) throw new Error("Failed to fetch accessories");
-
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch accessories");
+      }
+  
       const data = await response.json();
-      setAccessories(data.data || []);
+      console.log("Fetched Data:", data);
+      if (data && data.data) {
+        setAccessories(data.data || []);
+        setError(null);
+        console.log("context acc", accessories);
+      } else {
+        setError("No accessories data found");
+      }
+  
     } catch (err) {
+      // Catch and log any errors
+      console.error("Error fetching accessories:", err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // ➕ Add Accessory
   const addAccessory = async (accessoryData) => {
     try {
       const token = localStorage.getItem("userToken");
       const formData = new FormData();
-
-      Object.entries(accessoryData).forEach(([key, value]) =>
-        formData.append(key, value)
-      );
-
-      const response = await fetch(`http://127.0.0.1:8000/api/addaccessory`, {
+  
+      Object.entries(accessoryData).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((file) => formData.append(`${key}[]`, file));
+        } else {
+          formData.append(key, value);
+        }
+      });
+  
+      const response = await fetch(`${API_URL}/api/addaccessory`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-
+  
+      const result = await response.json();
+  
       if (!response.ok) {
-        const errorResponse = await response.json();
-        const message =
-          errorResponse?.message || "Something went wrong while adding";
-        showAlert({ variant: "error", title: "Error", message });
+        console.error("Server error:", result);
+        showAlert({ variant: "error", title: "Error", message: result.message || "Failed to add." });
         return;
       }
-
-      const result = await response.json();
+  
       setAccessories((prev) => [...prev, result.data]);
-      showAlert({ variant: "success", title: "Success", message: "Accessory added successfully" });
+      fetchAccessories(accessoryData.category_id);
+      showAlert({ variant: "success", title: "Success", message: "Accessory added!" });
     } catch (err) {
       showAlert({ variant: "error", title: "Error", message: err.message });
     }
   };
+  
 
-  // ✏️ Update Accessory
-  const updateAccessory = async (id, updatedData) => {
+  const updateAccessory = async (id, updatedData, currentCategoryId) => {
     try {
       const token = localStorage.getItem("userToken");
-
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/updateaccessory/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedData),
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to update accessory");
-
-      const updated = await response.json();
+  
+      const response = await fetch(`${API_URL}/api/updateaccessory/${id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to update accessory");
+      }
+  
+      // Update the local accessory state
       setAccessories((prev) =>
-        prev.map((item) => (item.id === id ? updated.data : item))
+        prev.map((item) => (item.id === id ? result.data : item))
       );
-
+  
+      // Refresh the accessory list
+      await fetchAccessories(currentCategoryId);
+  
       showAlert({
         variant: "success",
         title: "Success",
         message: "Accessory updated successfully",
       });
     } catch (err) {
-      showAlert({ variant: "error", title: "Error", message: err.message });
+      showAlert({
+        variant: "error",
+        title: "Error",
+        message: err.message,
+      });
     }
   };
+  
 
-  // ❌ Delete Accessory
   const deleteAccessory = async (id) => {
     try {
       const token = localStorage.getItem("userToken");
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/deleteaccessory/${id}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+
+      const response = await fetch(`${API_URL}/api/deleteaccessory/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       if (!response.ok) throw new Error("Failed to delete accessory");
 
       setAccessories((prev) => prev.filter((item) => item.id !== id));
+      await fetchAccessories(currentCategoryId); // ✅ explicitly pass current category
       showAlert({
         variant: "success",
         title: "Success",

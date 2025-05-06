@@ -6,7 +6,7 @@ export const Categoryelements = () => {
   return (
     <div>
         <CategoryProvider>
-            <category />
+            {/* <category /> */}
             <Categorytable/>
         </CategoryProvider>
     </div>

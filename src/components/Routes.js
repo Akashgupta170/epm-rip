@@ -42,10 +42,13 @@ import Emptask from "./pages/employee/Emptask/Emptask";
 import { Activityelement } from "./pages/superadmin/Activitytask/Activityelement";
 import EmployeeDetail from "./pages/superadmin/employee/EmployeeDetail";
 import ProjectManagerDashboard from "./pages/Pm/ProjectManagerDashboard";
-import {Accessoryelements} from "./pages/hr/Accessories/Accessoryelemets";
-import AddAccessories from "./pages/hr/Accessories/AddAccessories";
+import {Accessoryelements} from "./pages/hr/Accessories/Accessoryelements";
+import {AssignAccessoryelements} from "./pages/hr/AssignAccessory/AssignAccessoryelements";
+// import AddAccessories from "./pages/hr/Accessories/AddAccessories";
+// import {Accessorytable} from "./pages/hr/Accessories/Accessorytable";
 // import {Category} from "./pages/hr/Categories/Category";
 import { CategoryProvider } from "./context/CategoryContext";
+import { AccessoryProvider } from "./context/AccessoryContext";
 import { AssignAccessoryProvider } from "./context/AssignAccessoryContext";
 import { Categoryelements } from "./pages/hr/Categories/Categoryelements";
 import Accessory from "./pages/employee/Accessory/Accessory";
@@ -249,17 +252,27 @@ const AppRoutes = () => {
             element={<RoleBasedRoute element={<HrDashboard />} allowedRoles={["hr"]} />}
           />
           <Route
-            path="/hr/accessories"
+            path="/hr/accessories/assign"
             element={
               <AssignAccessoryProvider>
-                <RoleBasedRoute element={<Accessoryelements />} allowedRoles={["hr"]} />
+                <RoleBasedRoute element={<AssignAccessoryelements />} allowedRoles={["hr"]} />
               </AssignAccessoryProvider>
             }
           />
-          <Route
-            path="/hr/add-accessories/:id"
+          {/* <Route
+            path="/hr/accessory/manage/:id"
             element={<RoleBasedRoute element={<AddAccessories />} allowedRoles={["hr"]} />}
-          />
+          /> */}
+         <Route
+              path="/hr/accessory/manage/:id"
+              element={
+                <AccessoryProvider>
+                  <AssignAccessoryProvider>
+                    <RoleBasedRoute element={<Accessoryelements />} allowedRoles={["hr"]} />
+                  </AssignAccessoryProvider>
+                </AccessoryProvider>
+              }
+            />
           <Route
             path="/hr/accessory/category"
             element={

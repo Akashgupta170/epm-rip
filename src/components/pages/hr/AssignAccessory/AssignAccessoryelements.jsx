@@ -2,16 +2,21 @@ import React from 'react'
 // import { Accessories } from './Accessories'
 import { AssignAccessoryProvider } from '../../../context/AssignAccessoryContext'
 import { EmployeeProvider } from '../../../context/EmployeeContext'
-import { AssignAccessoryTable } from './Accessorytable'
+import { AssignAccessoryTable } from './AssignAccessorytable'
+// import { Accessorytable } from './Accessorytable'
 import { CategoryProvider } from '../../../context/CategoryContext'
+import { AccessoryProvider } from '../../../context/AccessoryContext'
 
-export const Accessoryelements  = () => {
+export const AssignAccessoryelements  = () => {
   return (
     <div>
         <AssignAccessoryProvider>
-          <CategoryProvider>
+          <CategoryProvider> 
               <EmployeeProvider>
+                <AccessoryProvider>
+                    {/* <Accessorytable /> */}
                     <AssignAccessoryTable />
+                    </AccessoryProvider>
               </EmployeeProvider>
             </CategoryProvider>
         </AssignAccessoryProvider>

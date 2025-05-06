@@ -60,8 +60,7 @@ export function Sidebar() {
       { name: "Employee Management", path: "/hr/employees", icon: <ContactRound /> },
       { name: "Leave Management", path: "/hr/leaves",icon: <CalendarCheck /> },
       { name: "Accessory category", path: "/hr/accessory/category",icon: <CalendarCheck /> },
-      // { name: "Accessories", path: "/hr/add-accessories",icon: <CalendarCheck /> },
-      { name: "accessories Management", path: "/hr/accessories",icon: <CalendarCheck /> },
+      { name: "Accessories assign", path: "/hr/accessories/assign",icon: <CalendarCheck /> },
     ],
     [Roles.PM]: [
       { name: "Dashboard", path: "/projectmanager/dashboard", icon: <House /> },

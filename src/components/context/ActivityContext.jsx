@@ -20,8 +20,7 @@ export const ActivityProvider = ({ children }) => {
 
     try {
       const response = await axios.post(
-        `${API_URL}/api/addtagsactivity`,
-        { name },
+        `${API_URL}/api/addtagsactivity`,{ name },
         {
           headers: {
             Authorization: `Bearer ${token}`,
