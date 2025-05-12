@@ -8,22 +8,19 @@ export const Category = () => {
 
   const [categoryName, setCategoryName] = useState("");
   const [categoryCode, setCategoryCode] = useState("");
-  const [instock, setInstock] = useState(""); // Corrected to 'instock'
   const [showMessage, setShowMessage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (categoryName.trim() && categoryCode.trim() && instock !== "") {
+    if (categoryName.trim() && categoryCode.trim()) {
       await addCategory({
         name: categoryName,
         category_code: categoryCode,
-        instock: parseInt(instock, 10),
       });
 
       setCategoryName("");
       setCategoryCode("");
-      setInstock("");
       setShowMessage(true);
       setIsModalOpen(false);
     }
@@ -86,20 +83,6 @@ export const Category = () => {
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   value={categoryCode}
                   onChange={(e) => setCategoryCode(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="instock" className="block font-medium text-gray-700 text-sm">
-                  In Stock
-                </label>
-                <input
-                  type="number"
-                  id="instock"
-                  placeholder="Enter quantity"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  value={instock}
-                  onChange={(e) => setInstock(e.target.value)}
                 />
               </div>
 

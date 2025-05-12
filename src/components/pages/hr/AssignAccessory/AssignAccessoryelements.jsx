@@ -1,5 +1,4 @@
 import React from 'react'
-// import { Accessories } from './Accessories'
 import { AssignAccessoryProvider } from '../../../context/AssignAccessoryContext'
 import { EmployeeProvider } from '../../../context/EmployeeContext'
 import { AssignAccessoryTable } from './AssignAccessorytable'

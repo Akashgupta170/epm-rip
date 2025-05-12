@@ -12,12 +12,13 @@ export const Accessories = () => {
     brand_name: "",
     category_id: id || "",
     vendor_name: "",
-    condition: "",
     purchase_date: "",
-    amount: "",
+    purchase_amount: "",
     images: [],
-    note: "",
-    status: "available",
+    condition: "good",
+    warranty_months: "",
+    stock_quantity: "",
+    notes: "",
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,10 +32,12 @@ export const Accessories = () => {
       vendor_name,
       condition,
       purchase_date,
-      amount,
+      purchase_amount,
+      stock_quantity,
+      warranty_months,
     } = formData;
 
-    if (brand_name && category_id && vendor_name && condition && purchase_date && amount) {
+    if (brand_name && category_id && vendor_name && condition && purchase_date && purchase_amount && warranty_months && stock_quantity) {
       await addAccessory(formData);
 
       // Reset form
@@ -44,12 +47,12 @@ export const Accessories = () => {
         vendor_name: "",
         condition: "",
         purchase_date: "",
-        amount: "",
+        purchase_amount: "",
+        stock_quantity: "",
+        warranty_months: "",
         images: [],
-        note: "",
-        status: "available",
+        notes: "",
       });
-
       setIsModalOpen(false);
     }
   };
@@ -119,32 +122,28 @@ export const Accessories = () => {
               </div>
 
               <div>
-                <label>Amount</label>
+                <label>Purchase amount</label>
                 <input
                   type="number"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  value={formData.purchase_amount}
+                  onChange={(e) => setFormData({ ...formData, purchase_amount: e.target.value })}
                   className="w-full mt-1 p-2 border border-gray-300 rounded-md"
-                  placeholder="Amount"
+                  placeholder="purchase_amount"
+                />
+              </div>
+              <div>
+                <label>Warranty (months)</label>
+                <input
+                  type="number"
+                  value={formData.warranty_months}
+                  onChange={(e) => setFormData({ ...formData, warranty_months: e.target.value })}
+                  className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+                  placeholder="warranty_months"
                 />
               </div>
 
               <div>
-                <label>Status</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full mt-1 p-2 border border-gray-300 rounded-md"
-                >
-                  <option value="available">Available</option>
-                  <option value="in_use">In Use</option>
-                  <option value="damaged">Damaged</option>
-                  <option value="under_repair">Under Repair</option>
-                </select>
-              </div>
-
-              <div className="col-span-2">
-                <label>Images</label>
+              <label>Images</label>
                 <input
                   type="file"
                   multiple
@@ -155,13 +154,24 @@ export const Accessories = () => {
                 />
               </div>
 
-              <div className="col-span-2">
-                <label>Note</label>
-                <textarea
-                  value={formData.note}
-                  onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+              <div>
+                <label>Stock</label>
+                <input
+                  type="number"
+                  value={formData.stock_quantity}
+                  onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })}
                   className="w-full mt-1 p-2 border border-gray-300 rounded-md"
-                  placeholder="write note"
+                  placeholder="stock quantity"
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label>Notes</label>
+                <textarea
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+                  placeholder="write notes"
                 />
               </div>
 

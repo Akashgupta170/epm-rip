@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useAssignAccessory } from '../../../context/AssignAccessoryContext';
-import { Loader2, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { SubmitButton } from '../../../AllButtons/AllButtons';
 import { useEmployees } from '../../../context/EmployeeContext';
 import { useCategory } from '../../../context/CategoryContext';
+import { useAccessory } from '../../../context/AccessoryContext';
 import Select from 'react-select';
-import { API_URL } from '../../../utils/ApiConfig';
-import axios from 'axios';
 
-export const Accessories = () => {
-  const { addAccessoryAssign, loading, error } = useAssignAccessory();
+export const AssignAccessories = () => {
+  const { addAccessoryAssign, loading } = useAssignAccessory();
   const { employees, loading: employeeLoading } = useEmployees();
   const { categories, isLoading: categoryLoading, fetchCategories } = useCategory();
-  const token = localStorage.getItem('userToken');
+  const { fetchAccessories, accessories, loading: accessoryLoading } = useAccessory(); // ✅ FIXED
 
-  const [accessories, setAccessories] = useState([]);
   const [formData, setFormData] = useState({
     user_id: '',
     category_id: '',
     accessory_id: '',
     assigned_at: '',
+    return_date: '',
+    condition: '',
+    notes: '',
     status: 'assigned',
   });
 
@@ -30,41 +31,37 @@ export const Accessories = () => {
     fetchCategories();
   }, []);
 
-  // Fetch accessories when category changes
   useEffect(() => {
-    const fetchAccessories = async () => {
-      if (!formData.category_id) return;
-
-      try {
-        const res = await axios.get(`${API_URL}/api/getaccessory/${formData.category_id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setAccessories(res.data.data || []);
-      } catch (err) {
-        console.error('Error fetching accessories:', err);
-        setAccessories([]);
-      }
-    };
-
-    fetchAccessories();
+    if (formData.category_id) {
+     fetchAccessories(formData.category_id);
+      
+    }
   }, [formData.category_id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (formData.user_id && formData.accessory_id && formData.assigned_at) {
+    const { user_id, accessory_id, assigned_at, return_date, condition, notes } = formData;
+    if (user_id && accessory_id && assigned_at && return_date && condition && notes) {
       await addAccessoryAssign(formData);
       setFormData({
         user_id: '',
         category_id: '',
         accessory_id: '',
         assigned_at: '',
+        return_date: '',
+        condition: '',
+        notes: '',
         status: 'assigned',
       });
       setIsModalOpen(false);
       setShowMessage(true);
     }
   };
+
+  const toStr = val => (val != null ? String(val) : '');
+  const selectedUser = employees.find(emp => toStr(emp.id) === toStr(formData.user_id));
+  const selectedCategory = categories.find(cat => toStr(cat.id) === toStr(formData.category_id));
+  const selectedAccessory = accessories.find(acc => toStr(acc.id) === toStr(formData.accessory_id));
 
   return (
     <div className="bg-white">
@@ -74,7 +71,7 @@ export const Accessories = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96 relative">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-[700px] relative">
             <button
               onClick={() => setIsModalOpen(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
@@ -85,121 +82,113 @@ export const Accessories = () => {
             <h2 className="text-xl font-semibold text-gray-800">Assign Accessory</h2>
             <p className="text-sm text-gray-500 mt-1">Assign a new accessory to a user</p>
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-2 gap-4">
               {/* User */}
               <div>
-                <label htmlFor="user_id" className="block font-medium text-gray-700 text-sm">
-                  User
-                </label>
+                <label className="block font-medium text-gray-700 text-sm">User</label>
                 <Select
                   options={employees.map(emp => ({ value: emp.id, label: emp.name }))}
-                  value={
-                    formData.user_id
-                      ? {
-                          value: formData.user_id,
-                          label: employees.find(emp => emp.id === formData.user_id)?.name || '',
-                        }
-                      : null
-                  }
-                  onChange={selected =>
-                    setFormData({ ...formData, user_id: selected.value })
-                  }
+                  value={selectedUser ? { value: selectedUser.id, label: selectedUser.name } : null}
+                  onChange={selected => setFormData({ ...formData, user_id: selected.value })}
                   isLoading={employeeLoading}
                   placeholder="Search User"
-                  className="mt-1"
                 />
               </div>
 
               {/* Category */}
               <div>
-                <label htmlFor="category_id" className="block font-medium text-gray-700 text-sm">
-                  Category
-                </label>
+                <label className="block font-medium text-gray-700 text-sm">Category</label>
                 <Select
                   options={categories.map(cat => ({ value: cat.id, label: cat.name }))}
-                  value={
-                    formData.category_id
-                      ? {
-                          value: formData.category_id,
-                          label: categories.find(cat => cat.id === formData.category_id)?.name || '',
-                        }
-                      : null
-                  }
-                  onChange={selected =>
-                    setFormData({ ...formData, category_id: selected.value, accessory_id: '' }) // clear accessory on change
-                  }
+                  value={selectedCategory ? { value: selectedCategory.id, label: selectedCategory.name } : null}
+                  onChange={selected => setFormData({ ...formData, category_id: selected.value, accessory_id: '' })}
                   isLoading={categoryLoading}
                   placeholder="Search Category"
-                  className="mt-1"
                 />
               </div>
 
               {/* Accessory */}
               <div>
-                <label htmlFor="accessory_id" className="block font-medium text-gray-700 text-sm">
-                  Accessory
-                </label>
+                <label className="block font-medium text-gray-700 text-sm">Accessory</label>
                 <Select
                   options={accessories.map(acc => ({
                     value: acc.id,
-                    label: acc.accessory_no,
+                    label: acc.brand_name,
                   }))}
-                  value={
-                    formData.accessory_id
-                      ? {
-                          value: formData.accessory_id,
-                          label:
-                            accessories.find(acc => acc.id === formData.accessory_id)
-                              ?.accessory_no || '',
-                        }
-                      : null
-                  }
-                  onChange={selected =>
-                    setFormData({ ...formData, accessory_id: selected.value })
-                  }
+                  value={selectedAccessory ? { value: selectedAccessory.id, label: selectedAccessory.brand_name } : null}
+                  onChange={selected => setFormData({ ...formData, accessory_id: selected.value })}
                   isDisabled={!formData.category_id}
+                  isLoading={accessoryLoading}
                   placeholder="Select Accessory"
-                  className="mt-1"
                 />
               </div>
 
               {/* Assigned At */}
               <div>
-                <label htmlFor="assigned_at" className="block font-medium text-gray-700 text-sm">
-                  Assigned At
-                </label>
+                <label className="block font-medium text-gray-700 text-sm">Assigned At</label>
                 <input
-                  id="assigned_at"
                   type="date"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full p-2 mt-1 border border-gray-300 rounded-md"
                   value={formData.assigned_at}
-                  onChange={e =>
-                    setFormData({ ...formData, assigned_at: e.target.value })
-                  }
+                  onChange={e => setFormData({ ...formData, assigned_at: e.target.value })}
+                />
+              </div>
+
+              {/* Return Date */}
+              <div>
+                <label className="block font-medium text-gray-700 text-sm">Return Date</label>
+                <input
+                  type="date"
+                  className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+                  value={formData.return_date}
+                  onChange={e => setFormData({ ...formData, return_date: e.target.value })}
+                />
+              </div>
+
+              {/* Condition */}
+              <div>
+                <label className="block font-medium text-gray-700 text-sm">Condition</label>
+                <input
+                  type="text"
+                  placeholder="Condition"
+                  className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+                  value={formData.condition}
+                  onChange={e => setFormData({ ...formData, condition: e.target.value })}
                 />
               </div>
 
               {/* Status */}
-              <div>
-                <label htmlFor="status" className="block font-medium text-gray-700 text-sm">
-                  Status
-                </label>
+              <div className="col-span-2">
+                <label className="block font-medium text-gray-700 text-sm">Status</label>
                 <select
-                  id="status"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full p-2 mt-1 border border-gray-300 rounded-md"
                   value={formData.status}
-                  onChange={e =>
-                    setFormData({ ...formData, status: e.target.value })
-                  }
+                  onChange={e => setFormData({ ...formData, status: e.target.value })}
                 >
                   <option value="assigned">Assigned</option>
-                  <option value="vacant">Vacant</option>
-                  <option value="in-repair">In-Repair</option>
+                  <option value="returned">Returned</option>
+                  <option value="in_repair">In-Repair</option>
+                  <option value="damaged">Damaged</option>
                   <option value="lost">Lost</option>
+                  <option value="trash">Trash</option>
                 </select>
               </div>
 
-              <SubmitButton disabled={loading} />
+              {/* Notes */}
+              <div className="col-span-2">
+                <label className="block font-medium text-gray-700 text-sm">Notes</label>
+                <textarea
+                  placeholder="Notes"
+                  className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+                  value={formData.notes}
+                  onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                />
+              </div>
+
+              {/* Submit */}
+              <div className="col-span-2">
+                <SubmitButton disabled={loading} />
+              </div>
             </form>
           </div>
         </div>

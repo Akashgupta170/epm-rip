@@ -176,34 +176,13 @@ const HREmployeemanagment = () => {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white shadow-lg max-h-screen overflow-y-auto">
       <SectionHeader icon={BarChart} title="Employee Management" subtitle="Manage employees and update details" />
-      {/* <div className="flex justify-between items-center p-4">
-        <div className="my-2">
-          <h2 className="text-xl font-semibold text-gray-900">Employee Management</h2>
-          <p className="text-sm text-gray-600 mt-1">Manage employees and update details</p>
-        </div>
-      </div> */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 sticky top-0 bg-white z-10 shadow-md">
         {/* Add Employee Button */}
         <button onClick={openModal} className="add-items-btn">
           Add Employee
         </button>
-        {/* Add Employee Button */}
-        {/* <button
-          onClick={openModal}
-          className="add-items-btn"
-        >
-          Add Employee
-        </button> */}
-
         {/* Search & Filter */}
         <div className="flex flex-wrap md:flex-nowrap items-center gap-3 border p-2 rounded-lg shadow-md bg-white">
-          {/* <input
-            type="text"
-            placeholder={`Search by ${filterBy}`}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-3 py-2 border rounded-md w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          /> */}
           <div className="flex items-center w-full border border-gray-300 px-2 rounded-lg focus-within:ring-2 focus-within:ring-blue-500">
             <Search className="h-5 w-5 text-gray-400 mr-[5px]" />
             <input
@@ -224,30 +203,11 @@ const HREmployeemanagment = () => {
             <option value="email">Email</option>
             <option value="team">Department</option>
           </select>
-
-          {/* <button
-            onClick={() => setSearchQuery("")}
-            className="px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
-          >
-            Clear
-          </button> */}
           <ClearButton onClick={() => setSearchQuery("")} />
           <div className="flex items-center gap-3 bg-white relative">
-            {/* <button
-              onClick={() => exportToExcel(employees, "employees.xlsx")}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
-            >
-              Export to Excel
-            </button> */}
             <ImportButton onClick={() => setShowImportOptions(!showImportOptions)} />
             <div className="relative">
               <ExportButton onClick={() => exportToExcel(employees, "employees.xlsx")} />
-              {/* <button
-                onClick={() => setShowImportOptions(!showImportOptions)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-              >
-                Import
-              </button> */}
               {showImportOptions && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-30">
                   <div className="bg-white rounded-lg shadow-lg p-6 w-96 flex flex-col gap-4 animate-fadeIn">

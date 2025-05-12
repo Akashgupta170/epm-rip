@@ -1,7 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { useAlert } from "./AlertContext";
 import { API_URL } from "../utils/ApiConfig";
-import { useParams } from "react-router-dom";
 
 const AccessoryContext = createContext();
 
@@ -11,26 +10,23 @@ export const AccessoryProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [currentCategoryId, setCurrentCategoryId] = useState(null);
   const { showAlert } = useAlert();
- 
 
   const fetchAccessories = async (id) => {
     if (!id) {
       setError("Missing category ID");
       return;
     }
-  
+
     setLoading(true);
     setCurrentCategoryId(id);
-  
+
     try {
       const token = localStorage.getItem("userToken");
       if (!token) {
         setError("Unauthorized");
         return;
       }
-  
-      console.log("Fetching accessories for category ID:", id);
-  
+
       const response = await fetch(`${API_URL}/api/getaccessory/${id}`, {
         method: "GET",
         headers: {
@@ -38,25 +34,21 @@ export const AccessoryProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to fetch accessories");
       }
-  
+
       const data = await response.json();
-      console.log("Fetched Data:", data);
       if (data && data.data) {
-        setAccessories(data.data || []);
+        setAccessories(data.data);
         setError(null);
-        console.log("context acc", accessories);
       } else {
         setError("No accessories data found");
       }
-  
     } catch (err) {
-      // Catch and log any errors
-      console.error("Error fetching accessories:", err);
       setError(err.message);
+      console.error("Error fetching accessories:", err);
     } finally {
       setLoading(false);
     }
@@ -66,7 +58,7 @@ export const AccessoryProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("userToken");
       const formData = new FormData();
-  
+
       Object.entries(accessoryData).forEach(([key, value]) => {
         if (Array.isArray(value)) {
           value.forEach((file) => formData.append(`${key}[]`, file));
@@ -74,21 +66,20 @@ export const AccessoryProvider = ({ children }) => {
           formData.append(key, value);
         }
       });
-  
+
       const response = await fetch(`${API_URL}/api/addaccessory`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-  
+
       const result = await response.json();
-  
+
       if (!response.ok) {
-        console.error("Server error:", result);
         showAlert({ variant: "error", title: "Error", message: result.message || "Failed to add." });
         return;
       }
-  
+
       setAccessories((prev) => [...prev, result.data]);
       fetchAccessories(accessoryData.category_id);
       showAlert({ variant: "success", title: "Success", message: "Accessory added!" });
@@ -96,49 +87,41 @@ export const AccessoryProvider = ({ children }) => {
       showAlert({ variant: "error", title: "Error", message: err.message });
     }
   };
-  
 
-  const updateAccessory = async (id, updatedData, currentCategoryId) => {
+  const updateAccessory = async (id, editFormData, currentCategoryId) => {
     try {
       const token = localStorage.getItem("userToken");
-  
+
       const response = await fetch(`${API_URL}/api/updateaccessory/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify(editFormData),
       });
-  
+
       const result = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(result.message || "Failed to update accessory");
       }
-  
-      // Update the local accessory state
+
       setAccessories((prev) =>
         prev.map((item) => (item.id === id ? result.data : item))
       );
-  
-      // Refresh the accessory list
+
       await fetchAccessories(currentCategoryId);
-  
+
       showAlert({
         variant: "success",
         title: "Success",
         message: "Accessory updated successfully",
       });
     } catch (err) {
-      showAlert({
-        variant: "error",
-        title: "Error",
-        message: err.message,
-      });
+      showAlert({ variant: "error", title: "Error", message: err.message });
     }
   };
-  
 
   const deleteAccessory = async (id) => {
     try {
@@ -152,7 +135,8 @@ export const AccessoryProvider = ({ children }) => {
       if (!response.ok) throw new Error("Failed to delete accessory");
 
       setAccessories((prev) => prev.filter((item) => item.id !== id));
-      await fetchAccessories(currentCategoryId); // ✅ explicitly pass current category
+      await fetchAccessories(currentCategoryId);
+
       showAlert({
         variant: "success",
         title: "Success",

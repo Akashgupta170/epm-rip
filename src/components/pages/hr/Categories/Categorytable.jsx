@@ -103,6 +103,7 @@ export const Categorytable = () => {
         ) : categories.length > 0 ? (
           categories.map((category) => (
             <div key={category.id} className="bg-gray-50 rounded-xl border p-5 shadow-sm hover:shadow-lg transition duration-300">
+              
               <div className="flex justify-between items-start">
                 <div className="w-full">
                   <h3 className="text-lg font-semibold text-gray-800">
@@ -132,26 +133,37 @@ export const Categorytable = () => {
                     )}
                   </p>
 
-                  <p className="text-sm text-gray-500 mt-1">
+                  <div className="flex flex-col flex-wrap gap-1 my-2 text-sm font-medium">
+                    <div className="text-blue-600">
+                      Total Stock:
+                      <span className="ml-1 inline-block bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                      {category.total_stock}
+                      </span>
+                    </div>
+                    <div className="text-green-600">
+                      Available:
+                      <span className="ml-1 inline-block bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                        {category.available_stock}
+                      </span>
+                    </div>
+                    <div className="text-yellow-600">
+                      In Use:
+                      <span className="ml-1 inline-block bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">
+                        {category.inuse}
+                      </span>
+                    </div>
+                    <div className="text-red-600">
+                      Trash:
+                      <span className="ml-1 inline-block bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                        {category.trash_stock}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-sm font-medium text-gray-500 mt-1">
                     Created: {formatDate(category.created_at)}
                   </p>
-                  <p className="text-sm text-gray-500">
-                    Updated: {formatDate(category.updated_at)}
-                  </p>
 
-                  <div className="text-sm mt-2 font-medium text-green-600">
-                    {editCategoryId === category.id ? (
-                      <input
-                        type="number"
-                        min={0}
-                        value={editCategoryStock}
-                        onChange={(e) => setEditCategoryStock(e.target.value)}
-                        className="border border-gray-300 rounded-md px-2 py-1 w-full"
-                      />
-                    ) : (
-                      <>Total Stock: {category.instock}</>
-                    )}
-                  </div>
                 </div>
 
                 <div className="flex flex-col gap-2 ml-3">
@@ -175,7 +187,7 @@ export const Categorytable = () => {
 
               <div className="mt-4 text-right">
                 <button
-                  onClick={() => handleViewClick(category.id)}
+                  onClick={() => handleViewClick(category.category_id)}
                   className="inline-block text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 text-sm"
                 >
                   Manage Accessories

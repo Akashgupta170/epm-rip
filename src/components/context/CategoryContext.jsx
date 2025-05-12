@@ -36,10 +36,10 @@ export const CategoryProvider = ({ children }) => {
     }
   }, [token]);
 
-  const addCategory = async ({ name, category_code,instock }) => {
+  const addCategory = async ({ name, category_code }) => {
     try {
       await axios.post(`${API_URL}/api/addaccessorycategory`,
-        { name, category_code,instock },
+        { name, category_code },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -52,9 +52,9 @@ export const CategoryProvider = ({ children }) => {
     }
   };
 
-  const updateCategory = async (id, name, category_code,instock) => {
+  const updateCategory = async (id, name, category_code) => {
     try {
-      await axios.put(`${API_URL}/api/updateaccessorycategory/${id}`, { name, category_code,instock },{
+      await axios.put(`${API_URL}/api/updateaccessorycategory/${id}`, { name, category_code },{
         headers: { Authorization: `Bearer ${token}` },
       });
       showAlert("success", "Category Updated", `${name} was updated successfully`);

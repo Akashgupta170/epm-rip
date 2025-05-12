@@ -177,12 +177,6 @@ const EmployeeManagement = () => {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white !shadow-md max-h-screen overflow-y-auto">
       <SectionHeader icon={BarChart} title="Employee Management" subtitle="Manage employees and update details" />
-      {/* <div className="flex justify-between items-center p-4">
-        <div className="my-2">
-          <h2 className="text-xl font-semibold text-gray-900">Employee Management</h2>
-          <p className="text-sm text-gray-600 mt-1">Manage employees and update details</p>
-        </div>
-      </div> */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 sticky top-0 bg-white z-10 shadow-md">
         {/* Add Employee Button */}
         <button onClick={openModal} className="add-items-btn">
