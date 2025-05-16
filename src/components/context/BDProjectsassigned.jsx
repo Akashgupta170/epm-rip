@@ -80,7 +80,7 @@ export const BDProjectsAssignedProvider = ({ children }) => {
     }
   };
 
-  const assignProject = async (projectId, managerIds) => { 
+  const assignProject = async (projectId, managerIds) => {
     setIsLoading(true);
     setMessage("");
     console.log("Assigning project:", projectId, "to managers:", managerIds);
@@ -91,14 +91,15 @@ export const BDProjectsAssignedProvider = ({ children }) => {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             },
-            body: JSON.stringify({ 
-                project_id: projectId, 
-                project_manager_ids: managerIds  
+            body: JSON.stringify({
+                project_id: projectId,
+                project_manager_ids: managerIds
             }),
         });
         console.log("Response Status:", response.status);
         const data = await response.json();
-        console.log("Response Data:", data); 
+        fetchAssigned();
+        console.log("Response Data:", data);
         if (handleUnauthorized(response)) return;
         if (response.ok) {
             showAlert({ variant: "success", title: "Success", message: "Project assigned successfully!" });
@@ -213,6 +214,7 @@ const rejectPerformanceSheet = async (id) => {
       let responseData = null;
       try {
           responseData = await response.json();
+           fetchAssigned();
       } catch (parseErr) {
           const fallbackText = await response.text();
           console.error("Failed to parse JSON. Response was:", fallbackText);

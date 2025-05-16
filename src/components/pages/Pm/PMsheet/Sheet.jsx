@@ -26,14 +26,6 @@ export const Sheet = () => {
 
     return (
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md shadow-black/25">
-            {/* <div className="top-heading-bg">
-                <div className="flex items-center gap-3 mb-3">
-                    <BarChart className="h-10 w-10 text-blue-100" />
-                    <h2 className="text-3xl font-bold text-white">Manage Performance Sheet</h2>
-                </div>
-                <p className="text-blue-100 text-lg">Track and manage performance sheets over time</p>
-            </div> */}
-
             <SectionHeader icon={BarChart} title="Manage Performance Sheet" subtitle="Track and manage performance sheets over time" />
 
             <div className="p-4 flex items-center gap-3">
@@ -98,14 +90,20 @@ export const Sheet = () => {
                                         <td className="px-4 py-4 text-center text-gray-700 whitespace-nowrap">{data.work_type}</td>
                                         <td className="px-4 py-4 text-center text-gray-700 whitespace-nowrap">{data.activity_type}</td>
                                         <td className="px-4 py-4 text-center text-gray-700 whitespace-nowrap">{data.time}</td>
-                                        <td
-  className="px-4 py-4 text-center text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px] relative group"
-  title={data.narration ?? ""}
->
-  {data.narration ? (data.narration.length > 9 ? `${data.narration.slice(0, 9)}...` : data.narration) : "--"}
-</td>
+                                        <td className="px-4 py-4 text-center text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px] relative group"
+                                            title={data.narration ?? ""}
+                                            >
+                                            {data.narration ? (data.narration.length > 9 ? `${data.narration.slice(0, 9)}...` : data.narration) : "--"}
+                                        </td>
 
-                                        <td className="px-4 py-4 text-center text-gray-700 whitespace-nowrap">{data.status}</td>
+                                        <td className="px-4 py-4 text-center text-gray-700 whitespace-nowrap">
+                                            <span
+                                                className={`inline-block px-3 py-1 text-sm font-semibold rounded-full 
+                                                ${data.status === "pending" ? "bg-yellow-100 text-yellow-800" : ""}
+                                                ${data.status === "approved" ? "bg-green-100 text-green-800" : ""}
+                                                ${data.status === "rejected" ? "bg-red-100 text-red-800" : ""}
+                                                `}>{data.status}</span>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (

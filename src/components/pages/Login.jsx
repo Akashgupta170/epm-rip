@@ -47,7 +47,7 @@ const Login = () => {
                         Hello,
                     </h1>
                     <p className=" text-gray-600 mb-6">
-                        Your new Cumulus account is ready for your use. Please enter your password to login.
+                        Please enter your password to login.
                     </p>
 
                     {/* Form */}
@@ -87,8 +87,8 @@ const Login = () => {
                                 Forgot password?
                             </a> */}
                             <Link to="/Updatepassword" className="text-[#e14a16] text-sm">
-                            Forgot password?
-</Link>
+                              Forgot password?
+                            </Link>
                         </div>
 
                         {/* Login Button */}
@@ -110,7 +110,7 @@ const Login = () => {
                         Don&apos;t have an account?{" "}
                         <Link to="/" className="text-[#e14a16]">
                         Register Now
-</Link>
+                      </Link>
                     </p> */}
                 </div>
             </div>
@@ -129,7 +129,7 @@ const Login = () => {
     <img
       src={logo}
       alt="Logo"
-      className="w-80 h-80 object-contain" // Adjust size as needed
+      className="w-80 h-80 object-contain"
     />
   </div>
 </div>

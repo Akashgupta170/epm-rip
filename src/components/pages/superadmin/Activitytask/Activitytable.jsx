@@ -119,7 +119,7 @@ export const Activitytable = () => {
                           onChange={(e) => setNewTagName(e.target.value)}
                         />
                       ) : (
-                        tag.name
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800">{tag.name}</span>
                       )}
                     </td>
                     <td className="px-6 py-4">

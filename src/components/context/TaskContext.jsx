@@ -43,6 +43,7 @@ export const TaskProvider = ({ children }) => {
             body: JSON.stringify(taskData),
           });
           const data = await response.json();
+          fetchTasks()
           if (response.ok) {
             fetchTasks(taskData.project_id); 
           } else {
@@ -67,6 +68,7 @@ export const TaskProvider = ({ children }) => {
           );
     
           setEmpTasks(response.data);
+          fetchTasks()
           console.log("✅ Employee Tasks:", response.data);
         } catch (error) {
           console.error("❌ Error fetching employee tasks:", error);
@@ -97,7 +99,7 @@ export const TaskProvider = ({ children }) => {
       };
 
 
-      const editTask = async (taskId, updatedTask) => {
+      const editTask = async (taskId, updatedTask,ID) => {
         try {
             const response = await axios.put(
                 `${API_URL}/api/edit-task/${taskId}`,
@@ -113,7 +115,7 @@ export const TaskProvider = ({ children }) => {
             if (response.status === 200) {
                 console.log("✅ Task updated successfully:", response.data);
                 // return response.data;
-                // fetchTasks();
+                fetchTasks(ID);
             } else {
                 console.error("❌ Failed to edit task:", response.data);
                 return null;

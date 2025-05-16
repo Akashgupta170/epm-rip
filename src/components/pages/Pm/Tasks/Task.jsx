@@ -108,7 +108,7 @@ export default function TaskList() {
       hours: editHours,
     };
 
-    const result = await editTask(taskId, updatedTask);
+    const result = await editTask(taskId, updatedTask,project_id);
     if (result) {
       setEditTaskId(null); // Exit edit mode
     }
@@ -268,76 +268,92 @@ export default function TaskList() {
                     )}
 
                     {/* Status Dropdown & Edit Buttons */}
-                    <div className="relative flex items-center gap-2">
-                      <button
-                        onClick={() => toggleStatusDropdown(task.id)}
-                        className="px-4 py-2 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300 transition-all whitespace-nowrap"
-                      >
-                        {task.status}
-                      </button>
+                      <div className="relative flex items-center gap-2">
+                        {/* Show status button only in edit mode */}
+                        {editTaskId === task.id ? (
+                          <>
+                            {/* Clickable status button that toggles the dropdown */}
+                            <button
+                              onClick={() => toggleStatusDropdown(task.id)}
+                              className="px-4 py-2 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300 transition-all whitespace-nowrap"
+                            >
+                              {task.status}
+                            </button>
 
-                      {statusDropdown === task.id && (
-                        <div className="absolute top-[10px] z-30 right-[35px] mt-2 w-36 bg-white border border-gray-300 rounded-lg shadow-lg">
-                          <button
-                            onClick={() => updateStatus(task.id, "To do")}
-                            className="block w-full px-4 py-2 text-left hover:bg-gray-100 "
-                          >
-                            To-Do
-                          </button>
-                          <button
-                            onClick={() => updateStatus(task.id, "In Progress")}
-                            className="block w-full px-4 py-2 text-left hover:bg-gray-100"
-                          >
-                            In Progress
-                          </button>
-                          <button
-                            onClick={() => updateStatus(task.id, "Completed")}
-                            className="block w-full px-4 py-2 text-left hover:bg-gray-100"
-                          >
-                            Completed
-                          </button>
-                          <button
-                            onClick={() => updateStatus(task.id, "Cancel")}
-                            className="block w-full px-4 py-2 text-left hover:bg-gray-100"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      )}
+                            {/* Dropdown for selecting status */}
+                            {statusDropdown === task.id && (
+                              <div className="absolute top-[50px] z-30 right-0 mt-2 w-36 bg-white border border-gray-300 rounded-lg shadow-lg">
+                                <button
+                                  onClick={() => updateStatus(task.id, "To do")}
+                                  className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                                >
+                                  To-Do
+                                </button>
+                                <button
+                                  onClick={() => updateStatus(task.id, "In Progress")}
+                                  className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                                >
+                                  In Progress
+                                </button>
+                                <button
+                                  onClick={() => updateStatus(task.id, "Completed")}
+                                  className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                                >
+                                  Completed
+                                </button>
+                                <button
+                                  onClick={() => updateStatus(task.id, "Cancel")}
+                                  className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            )}
 
-                      {/* Edit, Save & Cancel Buttons */}
-                      {editTaskId === task.id ? (
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => saveEdit(task.id)}
-                            className="save-btn"
-                          ><Save className="h-4 w-4 mr-1" />
-                            Save
-                          </button>
-                          <button
-                            onClick={cancelEdit}
-                            className="cancel-btn"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => startEditing(task)}
-                          className="edit-btn"
-                        ><Edit className="h-4 w-4 mr-1" />
-                          Edit
-                        </button>
-                      )}
+                            {/* Save and Cancel buttons */}
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => saveEdit(task.id)}
+                                className="save-btn"
+                              >
+                                <Save className="h-4 w-4 mr-1" />
+                                Save
+                              </button>
+                              <button
+                                onClick={cancelEdit}
+                                className="cancel-btn"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            {/* Show current status when not editing */}
+                            <button
+                              className="px-4 py-2 bg-gray-200 rounded-lg shadow-md cursor-default"
+                            >
+                              {task.status}
+                            </button>
 
-
-                      <button
-                        onClick={() => handleDelete(task.id)}
-                        className="delete-btn"
-                      ><Trash2 className="h-4 w-4 mr-1" />
-                        Delete
-                      </button>
-                    </div>
+                            {/* Edit and Delete buttons */}
+                            <button
+                              onClick={() => startEditing(task)}
+                              className="edit-btn"
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(task.id)}
+                              className="delete-btn"
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </div>
                   </div>
 
                   {/* Task Details (Expands when clicked) */}

@@ -49,14 +49,6 @@ export const LeaveManagement = () => {
     return (
         <div className="rounded-2xl border border-gray-200 bg-white shadow-lg max-h-screen overflow-y-auto">
             <SectionHeader icon={BarChart} title="Employee Management" subtitle="Manage employees and update details" />
-            {/* <div className="p-8 bg-gradient-to-br from-indigo-600 via-blue-600 to-blue-500">
-                <div className="flex items-center gap-3 mb-3">
-                    <BarChart className="h-10 w-10 text-blue-100" />
-                    <h2 className="text-3xl font-bold text-white">Manage Leaves</h2>
-                </div>
-                <p className="text-blue-100 text-lg">Track and manage leave requests</p>
-            </div> */}
-
             <div className="flex flex-wrap items-center justify-between gap-4 p-4 sticky top-0 bg-white z-10 shadow-md">
                 {/* <div className="relative w-full max-w-md">
                     <input
@@ -102,7 +94,7 @@ export const LeaveManagement = () => {
                                         {editMode[leave.id] ? (
                                             <div className="flex items-center gap-4">
                                                 <IconApproveButton onClick={() => handleStatusChange(leave.id, "Approved")} />
-                                                <IconRejectButton onClick={() => handleStatusChange(leave.id, "Approved")} />
+                                                <IconRejectButton onClick={() => handleStatusChange(leave.id, "Rejected")} />
                                                 {/* <button onClick={() => handleStatusChange(leave.id, "Approved")}>
                                                     <CheckCircle className="text-green-500 h-7 w-7 hover:text-green-600" />
                                                 </button>
@@ -121,7 +113,7 @@ export const LeaveManagement = () => {
                                             </div>
                                         ) : leave.status === "Rejected" ? (
                                             <div className="flex items-center gap-3">
-                                                <IconRejectButton />
+                                                <IconRejectButton onClick={() => handleStatusChange(leave.id, "Rejected")} />
                                                 <IconEditButton onClick={() => toggleEditMode(leave.id)} />
                                                 {/* <XCircle className="text-red-500 h-7 w-7" /> */}
                                                 {/* <button onClick={() => toggleEditMode(leave.id)}>

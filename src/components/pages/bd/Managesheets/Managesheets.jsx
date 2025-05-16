@@ -186,13 +186,6 @@ export const Managesheets = () => {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white shadow-md max-h-screen overflow-y-auto">
       <SectionHeader icon={BarChart} title="Manage Performance Sheet" subtitle="Track and manage performance sheets over time" />
-      {/* <div className="p-8 bg-gradient-to-br from-indigo-600 via-blue-600 to-blue-500">
-        <div className="flex items-center gap-3 mb-3">
-          <BarChart className="h-10 w-10 text-blue-100" />
-          <h2 className="text-3xl font-bold text-white">Manage Performance Sheet</h2>
-        </div>
-        <p className="text-blue-100 text-lg">Track and manage performance sheets over time</p>
-      </div> */}
       <div className="flex flex-wrap items-center justify-between gap-4 sticky top-0 bg-white z-10 shadow-md p-4 rounded-md">
 
         <div className="flex items-center w-full md:w-auto flex-1 border border-gray-300 px-2 rounded-lg focus-within:ring-2 focus-within:ring-blue-500">
@@ -210,16 +203,6 @@ export const Managesheets = () => {
         <div className="flex flex-wrap items-center gap-2">
           {!isCustomMode ? (
             <>
-              {/* <button
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                onClick={() => {
-                  const today = new Date().toISOString().split("T")[0];
-                  setStartDate(today);
-                  setEndDate(today);
-                }}
-              >
-                Today
-              </button> */}
               <TodayButton onClick={() => {
                 const today = new Date().toISOString().split("T")[0];
                 setStartDate(today);
@@ -233,33 +216,6 @@ export const Managesheets = () => {
                 setEndDate(formatted);
               }} />
 
-              {/* <button
-                className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition"
-                onClick={() => {
-                  const yesterday = new Date();
-                  yesterday.setDate(yesterday.getDate() - 1);
-                  const formatted = yesterday.toISOString().split("T")[0];
-                  setStartDate(formatted);
-                  setEndDate(formatted);
-                }}
-              >
-                Yesterday
-              </button> */}
-
-              {/* <button
-                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-                onClick={() => {
-                  const end = new Date();
-                  const start = new Date();
-                  start.setDate(start.getDate() - 6);
-                  const formattedStart = start.toISOString().split("T")[0];
-                  const formattedEnd = end.toISOString().split("T")[0];
-                  setStartDate(formattedStart);
-                  setEndDate(formattedEnd);
-                }}
-              >
-                Weekly
-              </button> */}
               <WeeklyButton onClick={() => {
                   const end = new Date();
                   const start = new Date();
@@ -269,13 +225,6 @@ export const Managesheets = () => {
                   setStartDate(formattedStart);
                   setEndDate(formattedEnd);
                 }}/>
-
-              {/* <button
-                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition"
-                onClick={() => setIsCustomMode(true)}
-              >
-                Custom
-              </button> */}
               <CustomButton onClick={() => setIsCustomMode(true)}/>
             </>
           ) : (
@@ -299,17 +248,6 @@ export const Managesheets = () => {
                   setEndDate("");
                 }}
               />
-              {/* <button
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-                onClick={() => {
-                  setIsCustomMode(false);
-                  setSearchTerm("");
-                  setStartDate("");
-                  setEndDate("");
-                }}
-              >
-                Cancel
-              </button> */}
 
             <CancelButton onClick={() => {
                   setIsCustomMode(false);
@@ -424,45 +362,58 @@ export const Managesheets = () => {
                     <td className="px-6 py-4 flex items-center justify-center">
                       {editMode[sheet.id] ? (
                         <div className="flex items-center gap-4">
-                          {/* <button onClick={() => { handleStatusChange(sheet, "approved"); toggleEditMode(sheet.id); }} className="hover:scale-110 transition-all">
-                            <CheckCircle className="text-green-500 h-7 w-7 hover:text-green-600 transition-colors" />
-                          </button>
-                          <button onClick={() => { handleStatusChange(sheet, "rejected"); toggleEditMode(sheet.id); }} className="hover:scale-110 transition-all">
-                            <XCircle className="text-red-500 h-7 w-7 hover:text-red-600 transition-colors" />
-                          </button>
-                          <button onClick={() => setEditMode("")} className="hover:scale-110 transition-all">
-                            <Ban className="text-yellow-500 h-7 w-7 hover:yellow-red-500 transition-colors" />
-                          </button> */}
-                          <IconApproveButton onClick={() => { handleStatusChange(sheet, "approved"); toggleEditMode(sheet.id); }} />
-                          <IconRejectButton onClick={() => { handleStatusChange(sheet, "rejected"); toggleEditMode(sheet.id); }} />
-                          <IconCancelTaskButton onClick={() => setEditMode("")} />
+                          <IconApproveButton
+                            onClick={() => {
+                              handleStatusChange(sheet, "approved");
+                              toggleEditMode(sheet.id);
+                            }}
+                          />
+                          <IconRejectButton
+                            onClick={() => {
+                              handleStatusChange(sheet, "rejected");
+                              toggleEditMode(sheet.id);
+                            }}
+                          />
+                          <IconCancelTaskButton
+                            onClick={() => {
+                              setEditMode((prev) => ({ ...prev, [sheet.id]: false }));
+                            }}
+                          />
                         </div>
-                      ) : sheet.status === "approved" ? (
+                      ) : sheet.status?.toLowerCase() === "approved" ? (
                         <div className="flex items-center gap-3">
                           <IconApproveButton />
-                          {/* <IconEditButton onClick={() => toggleEditMode(sheet.id)} /> */}
-                          {/* <button onClick={() => toggleEditMode(sheet.id)} className="hover:scale-110 transition">
-                            <Pencil className="text-blue-600 h-7 w-7 hover:text-blue-700" />
-                          </button> */}
+                          <button
+                            onClick={() => toggleEditMode(sheet.id)}
+                            className="hover:scale-110 transition"
+                          >
+                            <Pencil className="text-blue-600 h-6 w-6 hover:text-blue-700" />
+                          </button>
                         </div>
-                      ) : sheet.status === "rejected" ? (
+                      ) : sheet.status?.toLowerCase() === "rejected" ? (
                         <div className="flex items-center gap-3">
                           <IconRejectButton />
-                          {/* <IconEditButton onClick={() => toggleEditMode(sheet.id)} /> */}
-                          {/* <button onClick={() => toggleEditMode(sheet.id)} className="hover:scale-110 transition">
-                            <Pencil className="text-gray-500 h-7 w-7 hover:text-gray-700" />
-                          </button> */}
+                          <button
+                            onClick={() => toggleEditMode(sheet.id)}
+                            className="hover:scale-110 transition"
+                          >
+                            <Pencil className="text-blue-600 h-6 w-6 hover:text-blue-700" />
+                          </button>
                         </div>
                       ) : (
                         <div className="flex items-center gap-4">
-                          <IconApproveButton onClick={() => { handleStatusChange(sheet, "approved"); }} />
-                          <IconRejectButton onClick={() => { handleStatusChange(sheet, "rejected"); }} />
-                          {/* <button onClick={() => { handleStatusChange(sheet, "approved"); }} className="hover:scale-110 transition-all">
-                            <CheckCircle className="text-green-500 h-7 w-7 hover:text-green-600 transition-colors" />
+                          <IconApproveButton
+                            onClick={() => handleStatusChange(sheet, "approved")}
+                          />
+                          <IconRejectButton
+                            onClick={() => handleStatusChange(sheet, "rejected")}
+                          />
+                          <button
+                            onClick={() => toggleEditMode(sheet.id)}
+                            className="hover:scale-110 transition"
+                          >
+                            <Pencil className="text-blue-600 h-6 w-6 hover:text-blue-700" />
                           </button>
-                          <button onClick={() => { handleStatusChange(sheet, "rejected"); }} className="hover:scale-110 transition-all">
-                            <XCircle className="text-red-500 h-7 w-7 hover:text-red-600 transition-colors" />
-                          </button> */}
                         </div>
                       )}
                     </td>

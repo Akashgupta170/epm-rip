@@ -1,7 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import Sidebar from "./components/Sidebar";
+import { useEffect ,useState  } from "react";
 import { AlertProvider } from "./context/AlertContext";
+import { useLocation } from "react-router-dom";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 // import ManageAdmins from "./pages/superadmin/ManageAdmins";
 import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
@@ -34,7 +36,6 @@ import { Sheet } from "./pages/Pm/PMsheet/Sheet.jsx";
 import { PMProvider } from "./context/PMContext";
 import Empprojects from "./pages/employee/Empprojects/Empprojects";
 import { LeaveProvider } from "./context/LeaveContext";
-import { HREmployeelayout } from "./pages/hr/Employee/HREmployeelayout";
 import { PMleaves } from "./pages/Pm/PMleaves/PMleaves";
 import Task from "./pages/Pm/Tasks/Task";
 import { TaskProvider } from "./context/TaskContext";
@@ -52,6 +53,7 @@ import { AccessoryProvider } from "./context/AccessoryContext";
 import { AssignAccessoryProvider } from "./context/AssignAccessoryContext";
 import { Categoryelements } from "./pages/hr/Categories/Categoryelements";
 import Accessory from "./pages/employee/Accessory/Accessory";
+import { useNavigate } from "react-router-dom";
 // import EmployeeDetailHrEmployeeDetail from "./pages/hr/Employee/HrEmployeeDetail";
 const RoleBasedRoute = ({ element, allowedRoles }) => {
   // const { user } = useAuth();
@@ -70,7 +72,23 @@ const RoleBasedRoute = ({ element, allowedRoles }) => {
   return normalizedAllowedRoles.includes(userRole) ? element : <Navigate to="/" />;
 };
 
+
+
+
+
+
 const AppRoutes = () => {
+  const [role, setRole] = useState(localStorage.getItem("user_name") || "");
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation(); // Get current route
+
+
+
+
+
+
+
   return (
     <AlertProvider>
     <AuthProvider>
@@ -241,9 +259,11 @@ const AppRoutes = () => {
           <Route
             path="/projectmanager/performance-sheets"
             element={
-              <PMProvider>
-                <RoleBasedRoute element={<Sheet />} allowedRoles={["projectmanager"]} />
-              </PMProvider>
+              <BDProjectsAssignedProvider>
+                <PMProvider>
+                  <RoleBasedRoute element={<Managesheets />} allowedRoles={["projectmanager"]} />
+                </PMProvider>
+              </BDProjectsAssignedProvider>
             }
           />
           
@@ -337,7 +357,7 @@ const AppRoutes = () => {
           />
           <Route
             path="/hr/employees"
-            element={<RoleBasedRoute element={<HREmployeelayout/>} allowedRoles={["hr"]} />}
+            element={<RoleBasedRoute element={<Employeelayout/>} allowedRoles={["hr"]} />}
           />
           <Route
             path="/hr/users/:id"

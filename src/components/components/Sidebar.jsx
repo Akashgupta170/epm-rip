@@ -29,6 +29,7 @@ export function Sidebar() {
   const [openMenus, setOpenMenus] = useState({});
   const { logout } = useAuth();
   const userRole = localStorage.getItem("user_name");
+    const username = localStorage.getItem("name");
   const menuItems = {
     [Roles.ADMIN]: [
       { name: "Dashboard", path: "/admin/dashboard" },
@@ -94,7 +95,7 @@ export function Sidebar() {
             alt=""
           />
           <h2 className="text-lg font-semibold text-gray-700 capitalize">
-            {userRole.charAt(0).toUpperCase() + userRole.slice(1)} Panel
+            Welcome, {username}
           </h2>
           <button className="absolute right-4 top-4 p-2 rounded focus:outline-none xl:hidden">
             <XMarkIcon className="h-5 w-5 text-gray-700" />

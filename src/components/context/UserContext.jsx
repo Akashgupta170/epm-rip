@@ -120,10 +120,11 @@ export const UserProvider = ({ children }) => {
       console.log(":pushpin: ID:", id);
       if (!id || !id.id || !id.data) {
         showAlert({ variant: "warning", title: "warning", message: "Missing required data for updating the performance sheet." });
+        return;
       }
       const payload = id; 
       console.log(":white_check_mark: Final Payload:", JSON.stringify(payload, null, 2));
-      const response = await fetch(`${API_URL}/api/edit-performa-sheets`, {
+      const response = await fetch(`${API_URL}/api/edit-performa-sheets`,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",

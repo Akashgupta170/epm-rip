@@ -73,6 +73,7 @@ export const EmployeeProvider = ({ children }) => {
       showAlert({ variant: "error", title: "Error", message: err.message });
     }
   };
+
   const updateEmployee = async (id, updatedData) => {
     console.log("Sending updatedData:", updatedData);
     try {
@@ -84,7 +85,7 @@ export const EmployeeProvider = ({ children }) => {
             emergency_phone_num: updatedData.emergency_phone_num,
             address: updatedData.address,
             team_id: updatedData.team_id,
-            profile_pic: updatedData.profile_pic || null, 
+            profile_pic: updatedData.profile_pic,
             role_id: updatedData.role_id,
         };
         console.log("Final requestBody:", requestBody); 
@@ -93,6 +94,7 @@ export const EmployeeProvider = ({ children }) => {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
+                // "Content-Type": "multipart/form-data",
             },
             body: JSON.stringify(requestBody),
         });

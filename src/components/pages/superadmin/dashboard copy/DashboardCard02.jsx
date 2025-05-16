@@ -66,10 +66,23 @@ const DashboardCard02 = () => {
                         : `${leave.start_date} to ${leave.end_date}`}
                     </td>
                     <td className="p-3 text-center">
-                      {leave.status === "Approved"
-                        ? <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm border border-green-400">{leave.status}</span>
-                        : <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm border border-red-400">{leave.status}</span>}
-                    </td>
+                        {leave.status === "Approved" && (
+                          <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-sm border border-green-400">
+                            {leave.status}
+                          </span>
+                        )}
+                        {leave.status === "Pending" && (
+                          <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-sm border border-yellow-400">
+                            {leave.status}
+                          </span>
+                        )}
+                        {leave.status === "Rejected" && (
+                          <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-sm border border-red-400">
+                            {leave.status}
+                          </span>
+                        )}
+                      </td>
+
                     <td className="p-3 text-center">
                       {new Date(leave.created_at).toLocaleDateString()}
                     </td>

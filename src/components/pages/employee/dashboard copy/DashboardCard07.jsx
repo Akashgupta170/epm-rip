@@ -18,9 +18,9 @@ function DashboardCard07() {
             <StatCardHeader icon={Briefcase} title="Top performance sheet" tooltip="Top performance sheet" />
             <div className="p-4">
                 {/* Scrollable Table */}
-                <div className="overflow-x-auto">
-                <div className="max-h-96 overflow-y-auto rounded-lg">
-                    <table className="table-auto w-full text-sm text-gray-600">
+                <div className="overflow-x-auto min-h-96 overflow-y-auto">
+                <div className=" rounded-lg">
+                    <table className=" table-auto w-full text-sm text-gray-600">
                     {/* Table header */}
                     <thead className="text-xs uppercase bg-blue-600 text-white sticky top-0 z-10">
                         <tr>
@@ -51,12 +51,24 @@ function DashboardCard07() {
                             <td className="p-3 text-center">{sheet.client_name}</td>
                             <td className="p-3 text-center">{sheet.time}</td>
                             <td className="p-3 text-center">
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${sheet.work_type === 'WFO' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                            <span className={`text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm border ${sheet.work_type === 'WFO' ? 'bg-green-100 text-green-800 border-green-400' : 'bg-blue-100 text-blue-800 border-blue-400'}`}>
                                 {sheet.work_type}
                             </span>
                             </td>
                             <td className="p-3 text-center">
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${sheet.status === 'approved' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
+                            <span
+                                className={`text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm border ${
+                                    sheet.status === 'approved'
+                                    ? 'bg-green-100 text-green-800 border-green-400'
+                                    : sheet.status === 'rejected'
+                                    ? 'bg-red-100 text-red-800 border-red-400'
+                                    : sheet.status === 'pending'
+                                    ? 'bg-yellow-100 text-yellow-800 border-yellow-400'
+                                    : sheet.status === 'show'
+                                    ? 'bg-blue-100 text-blue-800 border-blue-400'
+                                    : 'bg-gray-100 text-gray-800 border-gray-400'
+                                }`}
+                                >
                                 {sheet.status}
                             </span>
                             </td>

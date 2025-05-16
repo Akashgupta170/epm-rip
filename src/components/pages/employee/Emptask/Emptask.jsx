@@ -1,8 +1,11 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Overview } from "../../../components/RichTextEditor";
+// import { Overview } from "../../../components/RichTextEditor";
 import { useTask } from "../../../context/TaskContext";
+import {BarChart} from 'lucide-react';
+import { SectionHeader } from '../../../components/SectionHeader';
+
 
 
 export default function Emptask() {
@@ -13,6 +16,7 @@ export default function Emptask() {
   console.log("project_id izzs", project_id);
 
   const { empTasks, fetchEmpTasks } = useTask();
+
   console.log("tasks", empTasks);
 
   useEffect(() => {
@@ -20,6 +24,9 @@ export default function Emptask() {
       fetchEmpTasks(project_id);
     }
   }, [project_id]);
+
+
+
 
   const toggleTask = (id) => {
     setOpenTask(openTask === id ? null : id);
@@ -30,12 +37,10 @@ export default function Emptask() {
   };
 
   return (
-    <div className="flex items-center justify-center relative">
-
-
-
+    <div>
+      <SectionHeader icon={BarChart} title="Project details" subtitle="Track and manage your projects details efficiently with our intuitive dashboard." />
+      <div className="flex items-center justify-center relative">
       <div className="w-full bg-white shadow-md rounded-3xl p-4">
-        <h2 className="text-4xl font-extrabold text-blue-800 mb-8 text-center">Project Details</h2>
         {empTasks.project && (
           <div className="mb-8 top-heading-bg rounded-lg shadow-md ">
             <p className="text-2xl font-bold text-gray-900 text-white">{empTasks.project.name}</p>
@@ -110,5 +115,8 @@ export default function Emptask() {
       </div>
 
     </div>
+    </div>
+
+    
   );
 } 

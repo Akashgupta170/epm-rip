@@ -225,13 +225,12 @@ function LeaveForm() {
                     Number of Hours
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     id="hours"
                     name="hours"
-                    min="1"
-                    max="8"
                     value={formData.hours}
                     onChange={handleChange}
+                    placeholder='3pm to 6pm'
                     className="block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
                   />
                 </div>

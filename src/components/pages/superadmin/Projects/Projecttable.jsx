@@ -91,13 +91,6 @@ export const Projecttable = () => {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white shadow-md max-h-screen overflow-y-auto">
       <SectionHeader icon={BarChart} title="Projects Management" subtitle="View, edit and manage Projects" />
-      {/* <div className="flex justify-between items-center p-4">
-        <div className="my-2">
-          <h2 className="text-xl font-semibold text-gray-800">Projects Management</h2>
-          <p className="text-sm text-gray-500 mt-1">View, edit and manage Projects</p>
-        </div>
-        <Projects />
-      </div> */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 sticky top-0 bg-white p-4 z-10 shadow-md">
         <Projects />
 
@@ -209,38 +202,43 @@ export const Projecttable = () => {
                         project.project_name
                       )}
                     </td>
-
                     <td className="px-6 py-4 items-center text-center text-gray-700 text-sm">
-  {editProjectId === project.id ? (
-    <div className="flex flex-wrap gap-2 justify-center">
-      {activityTags?.map((tag) => (
-        <label key={tag.id} className="flex items-center space-x-1">
-          <input
-            type="checkbox"
-            value={tag.id}
-            checked={editTags.includes(tag.id)}
-            onChange={(e) => {
-              if (e.target.checked) {
-                setEditTags([...editTags, tag.id]);
-              } else {
-                setEditTags(editTags.filter((id) => id !== tag.id));
-              }
-            }}
-            className="form-checkbox h-4 w-4 text-blue-600"
-          />
-          <span className="text-gray-700 text-sm">{tag.name}</span>
-        </label>
-      ))}
-    </div>
-  ) : project.tags_activities?.length > 0 ? (
-    project.tags_activities.map(tag => tag.name).join(", ")
-  ) : (
-    "—"
-  )}
-</td>
-
-
-
+                      {editProjectId === project.id ? (
+                        <div className="flex flex-wrap gap-2 justify-center">
+                          {activityTags?.map((tag) => (
+                            <label key={tag.id} className="flex items-center space-x-1">
+                              <input
+                                type="checkbox"
+                                value={tag.id}
+                                checked={editTags.includes(tag.id)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setEditTags([...editTags, tag.id]);
+                                  } else {
+                                    setEditTags(editTags.filter((id) => id !== tag.id));
+                                  }
+                                }}
+                                className="form-checkbox h-4 w-4 text-blue-600"
+                              />
+                              <span className="text-gray-700 text-sm">{tag.name}</span>
+                            </label>
+                          ))}
+                        </div>
+                      ) : project.tags_activities?.length > 0 ? (
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {project.tags_activities.map((tag, index) => (
+                            <span
+                              key={index}
+                              className="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full"
+                            >
+                              {tag.name}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
                     <td className="px-6 py-4 items-center text-center text-gray-600 text-sm">
                       {project.created_at}
                     </td>

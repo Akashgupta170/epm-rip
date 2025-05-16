@@ -23,7 +23,7 @@ const Addsheet = () => {
     projectId: "",
     hoursSpent: "",
     billingStatus: "",
-    status: "",
+    status: "WFO",
     notes: "",
     project_type: "",
     project_type_status: "",

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../../../utils/ApiConfig';
 import { StatCardHeader } from "../../../components/CardsDashboard";
-import { CheckCircle, XCircle, Pencil, Ban, Save, Edit, CalendarDays, Trash2, Eye, UserPlus, FolderSync, Briefcase } from "lucide-react";
+import { CalendarDays } from "lucide-react";
+
 
 const DashboardCard02 = () => {
   const [leaves, setLeaves] = useState([]);
@@ -37,11 +38,7 @@ const DashboardCard02 = () => {
 
   return (
     <div className="col-span-full shadow-lg rounded-lg xl:col-span-6 bg-white shadow-xs rounded-xl">
-      {/* <header className="px-5 pt-2 pb-2">
-        <h2 className="font-semibold mb-2 text-2xl ">Recent Leaves</h2>
-        <hr />
-      </header> */}
-      <StatCardHeader icon={CalendarDays} title="Recent Leaves" tooltip="Recent Leaves Details." />
+      <StatCardHeader icon={CalendarDays} title="Recent Leaves" tooltip="Recent Leaves" />
       <div className="p-3">
         <div className="overflow-auto max-h-[50vh]">
           <table className="table-auto w-full">
@@ -66,9 +63,19 @@ const DashboardCard02 = () => {
                         : `${leave.start_date} to ${leave.end_date}`}
                     </td>
                     <td className="p-3 text-center">
-                      {leave.status === "Approved"
-                        ? <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm border border-green-400">{leave.status}</span>
-                        : <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm border border-red-400">{leave.status}</span>}
+                      {leave.status === "Approved" ? (
+                        <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm border border-green-400">
+                          {leave.status}
+                        </span>
+                      ) : leave.status === "Pending" ? (
+                        <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm border border-yellow-400">
+                          {leave.status}
+                        </span>
+                      ) : leave.status === "Rejected" ? (
+                        <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm border border-red-400">
+                          {leave.status}
+                        </span>
+                      ) : null}
                     </td>
                     <td className="p-3 text-center">
                       {new Date(leave.created_at).toLocaleDateString()}

@@ -13,16 +13,15 @@ import { useAlert } from "../../../context/AlertContext";
 import { BarChart, Search, UserPlus } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useAssignAccessory } from "../../../context/AssignAccessoryContext";
-// import { Alert } from "@material-tailwind/react";
 
 export const Accessorytable = () => {
   const { accessories, deleteAccessory, fetchAccessories, updateAccessory } = useAccessory();
   const { fetchAccessoryAssign } = useAssignAccessory();
   const { id } = useParams();
-  const { alert, setAlert } = useAlert();
+  const { setAlert } = useAlert();
 
-  const [selectedBrand, setSelectedBrand] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [brandFilter, setBrandFilter] = useState("All");
   const [filteredAccessories, setFilteredAccessories] = useState([]);
   const [editAccessoryId, setEditAccessoryId] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -30,15 +29,12 @@ export const Accessorytable = () => {
     vendor_name: "",
     purchase_date: "",
     purchase_amount: "",
-    // images: [],
     condition: "good",
     warranty_months: "",
     stock_quantity: "",
     notes: "",
   });
- 
 
-  // Fetch all accessories and assigned accessories
   useEffect(() => {
     if (id) fetchAccessories(id);
   }, [id]);
@@ -47,27 +43,31 @@ export const Accessorytable = () => {
     fetchAccessoryAssign();
   }, []);
 
-  // Filter accessories based on search and selected brand
   useEffect(() => {
     if (accessories) {
-      setFilteredAccessories(
-        accessories.filter(
-          (accessory) =>
-            (selectedBrand ? accessory.brand_name === selectedBrand : true) &&
-            (searchQuery
-              ? accessory.brand_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                accessory.vendor_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                accessory.purchase_date.toLowerCase().includes(searchQuery.toLowerCase())
-              : true)
-        )
-      );
-    }
-  }, [accessories, selectedBrand, searchQuery]);
+      let result = accessories;
 
-  // Initialize edit form data when the edit mode is triggered
+      if (searchQuery) {
+        const lowerQuery = searchQuery.toLowerCase();
+        result = result.filter(
+          (item) =>
+            item.brand_name.toLowerCase().includes(lowerQuery) ||
+            item.vendor_name.toLowerCase().includes(lowerQuery) ||
+            item.purchase_date.toLowerCase().includes(lowerQuery)
+        );
+      }
+
+      if (brandFilter !== "All") {
+        result = result.filter((item) => item.brand_name === brandFilter);
+      }
+
+      setFilteredAccessories(result);
+    }
+  }, [accessories, searchQuery, brandFilter]);
+
   useEffect(() => {
     if (editAccessoryId) {
-      const accessoryToEdit = accessories.find((accessory) => accessory.id === editAccessoryId);
+      const accessoryToEdit = accessories.find((a) => a.id === editAccessoryId);
       if (accessoryToEdit) {
         setEditFormData({
           brand_name: accessoryToEdit.brand_name,
@@ -85,22 +85,8 @@ export const Accessorytable = () => {
   }, [editAccessoryId, accessories]);
 
   const handleSaveClick = async () => {
-    // Form validation
-    if (
-      !editFormData.brand_name ||
-      !editFormData.category_id ||
-      !editFormData.vendor_name ||
-      !editFormData.condition ||
-      !editFormData.purchase_date ||
-      !editFormData.amount ||
-      !editFormData.warranty ||
-      !editFormData.stock_quantity ||
-      !editFormData.note
-    )
-    console.log(editFormData);
     await updateAccessory(editAccessoryId, editFormData, editFormData.category_id);
-    setEditAccessoryId(null); // Exit edit mode
-   
+    setEditAccessoryId(null);
   };
 
   const handleDeleteClick = async (id) => {
@@ -115,17 +101,20 @@ export const Accessorytable = () => {
 
   const handleClearSearch = () => {
     setSearchQuery("");
-    setFilteredAccessories(accessories);
+    setBrandFilter("All");
   };
+
+  const uniqueBrands = ["All", ...new Set(accessories.map((item) => item.brand_name))];
 
   return (
     <div className="relative rounded-2xl border border-gray-200 bg-white shadow-lg h-screen overflow-y-auto">
       <SectionHeader icon={BarChart} title="Accessories" subtitle="Manage accessory details" />
       <div className="p-4">
-
         <div className="flex flex-wrap items-center justify-between gap-4 p-4 sticky top-0 bg-white z-10 shadow-md">
           <Accessories />
+
           <div className="flex flex-wrap md:flex-nowrap items-center gap-3 border p-2 rounded-lg shadow-md bg-white">
+            {/* Search Input */}
             <div className="flex items-center w-full border border-gray-300 px-2 rounded-lg focus-within:ring-2 focus-within:ring-blue-500">
               <Search className="h-5 w-8 text-gray-400 mr-[5px]" />
               <input
@@ -133,31 +122,28 @@ export const Accessorytable = () => {
                 className="min-w-[300px] rounded-lg focus:outline-none py-2"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={`Search by Brand, Vendor or Purchase Date`}
+                placeholder="Search by Brand, Vendor or Purchase Date"
               />
+              
             </div>
-            <ClearButton onClick={handleClearSearch} />
-            <button className="add-items-btn">
-              <UserPlus /> Assign
-            </button>
-          </div>
-        </div>
-
-        {/* Brand Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 p-4 border-b">
-          {accessories.map((accessory) => (
-            <button
-              key={accessory.id}
-              onClick={() => setSelectedBrand(accessory.brand_name)}
-              className={
-                selectedBrand === accessory.brand_name
-                  ? "px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-blue-600 text-white"
-                  : "px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-200 text-gray-600 hover:bg-gray-300"
-              }
+            {/* Brand Dropdown */}
+            <select
+              value={brandFilter}
+              onChange={(e) => setBrandFilter(e.target.value)}
+              className="border rounded-lg p-2 text-gray-700"
             >
-              {accessory.brand_name}
-            </button>
-          ))}
+              {uniqueBrands.map((brand) => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+            </select>
+            <ClearButton onClick={handleClearSearch} />
+
+            {/* <button className="add-items-btn">
+              <UserPlus /> Assign
+            </button> */}
+          </div>
         </div>
 
         <div className="w-full h-screen overflow-auto mt-4">
@@ -244,7 +230,7 @@ export const Accessorytable = () => {
                           className="border border-gray-300 rounded-md p-2"
                         />
                       ) : (
-                        accessory.warranty_months + ' month'
+                        accessory.warranty_months + " month"
                       )}
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -280,7 +266,9 @@ export const Accessorytable = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="px-6 py-4 text-center">No matching accessories found.</td>
+                  <td colSpan="7" className="px-6 py-4 text-center">
+                    No matching accessories found.
+                  </td>
                 </tr>
               )}
             </tbody>

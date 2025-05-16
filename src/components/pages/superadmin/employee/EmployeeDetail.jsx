@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Bar, Doughnut, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { API_URL } from '../../../utils/ApiConfig';
+import { SectionHeader } from '../../../components/SectionHeader';
+import { BarChart} from "lucide-react";
 
 ChartJS.register(CategoryScale, BarElement, Title, Tooltip, Legend);
 
@@ -130,72 +132,90 @@ const EmployeeDetail = () => {
 
   if (!employee) return <div className="text-center py-20 text-xl text-gray-600">Loading...</div>;
 
-  return (
-    <div className="container mx-auto px-4 py-8 space-y-10 bg-gray-50 min-h-screen">
-    <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Employee Details</h2>
-  
-    {/* Profile Section */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-white p-6 rounded-xl shadow-md">
-      <div className="flex flex-col items-center">
-        <img
-  src={employee.profile_pic_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} // example online icon
-  alt="Profile"
-          className="w-36 h-36 rounded-full object-cover shadow-lg mb-4"
-        />
-        <h2 className="text-xl font-semibold text-gray-900">{employee.name}</h2>
-        <p className="text-sm text-gray-600">{employee.email}</p>
-      </div>
-  
-      <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
-        <p><span className="font-semibold">Designation:</span> {employee.roles}</p>
-        <p><span className="font-semibold">Phone:</span> {employee.phone_num}</p>
-        <p><span className="font-semibold">Emergency Phone:</span> {employee.emergency_phone_num}</p>
-        <p><span className="font-semibold">Team:</span> {employee.team}</p>
-        <p><span className="font-semibold">Address:</span> {employee.address}</p>
-      </div>
+return (
+    <>
+      <div className="rounded-2xl border border-gray-200 bg-white shadow-md max-h-screen overflow-y-auto p-6 space-y-10">
+  {/* Header */}
+  <SectionHeader
+    icon={BarChart}
+    title="Employee Detail"
+    subtitle="Manage employees' details and view their activity insights"
+  />
+
+  {/* Profile Card */}
+  <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+    <div className="flex flex-col items-center text-center space-y-3">
+      <img
+        src={employee.profile_pic || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
+        alt="Profile"
+        className="w-36 h-36 rounded-full object-cover shadow-md border-4 border-blue-100"
+      />
+      <h2 className="text-2xl font-bold text-gray-900">{employee.name}</h2>
+      <p className="text-sm text-gray-500">{employee.email}</p>
     </div>
-  
-    {/* Charts Overview */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div className="bg-white p-6 rounded-xl shadow-md">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Overall Hours</h3>
+
+    <div className="md:col-span-2 grid sm:grid-cols-2 gap-x-10 gap-y-4 text-gray-700 text-sm">
+      <p><span className="font-semibold text-gray-900">Designation:</span> {employee.roles}</p>
+      <p><span className="font-semibold text-gray-900">Phone:</span> {employee.phone_num}</p>
+      <p><span className="font-semibold text-gray-900">Emergency Contact:</span> {employee.emergency_phone_num}</p>
+      <p><span className="font-semibold text-gray-900">Team:</span> {employee.team}</p>
+      <p className="sm:col-span-2"><span className="font-semibold text-gray-900">Address:</span> {employee.address}</p>
+    </div>
+  </div>
+
+  {/* Charts */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">Total Hours Summary</h3>
+      <div className="h-80">
         <Bar data={barChartData} />
       </div>
-  
-      <div className="bg-white p-6 rounded-xl shadow-md">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Activity Types (All Projects)</h3>
-        {doughnutChartData && <Doughnut data={doughnutChartData} />}
-      </div>
     </div>
-  
-    {/* Pie Chart Per Project */}
-    <div className="bg-white p-6 rounded-xl shadow-md">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">Project Specific Activity</h3>
-  
-      <div className="flex flex-col md:flex-row items-center gap-4">
-        <select
-          value={selectedProject}
-          onChange={handleProjectChange}
-          className="w-full md:w-1/2 p-2 border rounded-lg"
-        >
-          <option value="" disabled>Select a project</option>
-          {projects.map((project, index) => (
-            <option key={index} value={project.project_name || 'Unnamed Project'}>
-              {project.project_name || 'Unnamed Project'}
-            </option>
-          ))}
-        </select>
-  
-        {pieChartData?.datasets?.length > 0 && (
-          <div className="w-full md:w-1/2">
-            <Pie data={pieChartData} />
-          </div>
+
+    <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">Activity Distribution (All Projects)</h3>
+      <div className="h-80 flex items-center justify-center">
+        {doughnutChartData ? (
+          <Doughnut data={doughnutChartData} />
+        ) : (
+          <p className="text-center text-gray-400">No data available</p>
         )}
       </div>
     </div>
   </div>
-  
-  );
-};
+
+  {/* Project Specific Chart */}
+  <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 space-y-6">
+    <h3 className="text-lg font-semibold text-gray-800">Select Project for Activity Analysis</h3>
+
+    <div className="flex flex-col md:flex-row items-center gap-6">
+      <select
+        value={selectedProject}
+        onChange={handleProjectChange}
+        className="w-full md:w-1/2 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="" disabled>Select a project</option>
+        {projects.map((project, index) => (
+          <option key={index} value={project.project_name || 'Unnamed Project'}>
+            {project.project_name || 'Unnamed Project'}
+          </option>
+        ))}
+      </select>
+
+      {pieChartData?.datasets?.length > 0 && (
+        <div className="w-full md:w-1/2 bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+          <div className='flex justify-center h-80 '>
+            <Pie data={pieChartData} />
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
+    </>
+);
+
+}
 
 export default EmployeeDetail;

@@ -36,6 +36,7 @@ export const EmpSheetHistory = () => {
   const recordsPerPage = 11;
 
   const handleEditClick = (index, sheet) => {
+    // console.log("Edit clicked", index);
     setEditingRow(index);
     setEditedData({ ...sheet });
   };
