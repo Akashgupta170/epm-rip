@@ -4,5 +4,6 @@ export const Roles = {
   HR: "hr",
   TEAM: "team",
   BD: "billingmanager",
-  PM: "projectmanager"
+  PM: "projectmanager",
+  Tl: "tl"
 };

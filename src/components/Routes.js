@@ -18,7 +18,7 @@ import { Clientelements } from "./pages/superadmin/Clients/Clientelements";
 import { Employeelayout } from "./pages/superadmin/employee/Employeelayout";
 import { Projectelements } from "./pages/superadmin/Projects/Projectelements";
 import { ProjectDetail } from "./pages/superadmin/Projects/ProjectDetail";
-import { Projectelementsbd } from "./pages/bd/Projects/Projectelementsbd";
+// import { Projectelementsbd } from "./pages/bd/Projects/Projectelementsbd";
 import { Clientelementsbd } from "./pages/bd/Clients/Clientelementsbd";
 import { AuthProvider } from "./context/AuthContext";
 import BDDashboard from "./pages/bd/BDDashboard";
@@ -198,7 +198,7 @@ const AppRoutes = () => {
 
           <Route
             path="/billingmanager/projects"
-            element={<RoleBasedRoute element={<Projectelementsbd />} allowedRoles={["billingmanager"]} />}
+            element={<RoleBasedRoute element={<Projectelements />} allowedRoles={["billingmanager"]} />}
           />
           
           <Route
@@ -266,6 +266,48 @@ const AppRoutes = () => {
               </BDProjectsAssignedProvider>
             }
           />
+
+           <Route
+            path="/tl/dashboard"
+            element={<RoleBasedRoute element={<ProjectManagerDashboard />} allowedRoles={["tl"]} />}
+          />
+
+          <Route
+            path="/tl/assigned"
+            element={<RoleBasedRoute element={<PMassignedelement />} allowedRoles={["tl"]} />}
+          />
+          <Route
+            path="/tl/assign"
+            element={<RoleBasedRoute element={<AssignelementPM />} allowedRoles={["tl"]} />}
+          />
+          <Route
+            path="/tl/tasks/:project_id"
+            element={
+              <TaskProvider> 
+                <RoleBasedRoute element={<Task />} allowedRoles={["tl"]} />
+              </TaskProvider>
+            }
+          />
+
+          <Route
+            path="/tl/manage-leaves"
+            element={
+              <LeaveProvider>
+                <RoleBasedRoute element={<PMleaves/>} allowedRoles={["tl"]} />
+                </LeaveProvider>
+            }
+          />
+
+          <Route
+            path="/tl/performance-sheets"
+            element={
+              <BDProjectsAssignedProvider>
+                <PMProvider>
+                  <RoleBasedRoute element={<Managesheets />} allowedRoles={["tl"]} />
+                </PMProvider>
+              </BDProjectsAssignedProvider>
+            }
+          />
           
           <Route
             path="/hr/dashboard"
@@ -293,6 +335,10 @@ const AppRoutes = () => {
                 </AccessoryProvider>
               }
             />
+            <Route
+            path="/hr/teams"
+            element={<RoleBasedRoute element={<BDTeamelement />} allowedRoles={["hr"]} />}
+          />
           <Route
             path="/hr/accessory/category"
             element={
