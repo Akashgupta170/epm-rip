@@ -75,42 +75,38 @@ export const EmployeeProvider = ({ children }) => {
   };
 
   const updateEmployee = async (id, updatedData) => {
-    console.log("Sending updatedData:", updatedData);
-    try {
-        const token = localStorage.getItem("userToken");
-        const requestBody = {
-            name: updatedData.name,
-            email: updatedData.email,
-            phone_num: updatedData.phone_num,
-            emergency_phone_num: updatedData.emergency_phone_num,
-            address: updatedData.address,
-            team_id: updatedData.team_id,
-            profile_pic: updatedData.profile_pic,
-            role_id: updatedData.role_id,
-        };
-        console.log("Final requestBody:", requestBody); 
-        const response = await fetch(`${API_URL}/api/users/${id}`, {
-            method: "PUT",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-                // "Content-Type": "multipart/form-data",
-            },
-            body: JSON.stringify(requestBody),
-        });
-        fetchEmployees();
-        showAlert({ variant: "success", title: "Success", message: "Employee updated successfully" });
-        console.log("Response:", response);
-        if (!response.ok) {
-          showAlert({ variant: "error", title: "Error", message: "Failed to update employee" });
-            throw new Error("Failed to update employee");
-        }
-    } catch (err) {
-        console.error("Error:", err.message);
-        showAlert({ variant: "error", title: "Error", message: err.message });
-        setError(err.message);
-    }
+  const token = localStorage.getItem("userToken");
+
+  const formData = new FormData();
+  formData.append("name", updatedData.name);
+  formData.append("email", updatedData.email);
+  formData.append("phone_num", updatedData.phone_num || "");
+  formData.append("emergency_phone_num", updatedData.emergency_phone_num || "");
+  formData.append("address", updatedData.address || "");
+  formData.append("team_id", updatedData.team_id || "");
+  formData.append("role_id", updatedData.role_id || "");
+  formData.append('_method', 'PUT');
+
+  if (updatedData.profile_pic instanceof File) {
+    formData.append("profile_pic", updatedData.profile_pic);
+  }
+
+  const response = await fetch(`${API_URL}/api/users/${id}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update employee");
+  }
+
+  fetchEmployees();
+  showAlert({ variant: "success", title: "Success", message: "Employee updated successfully" });
 };
+
 const deleteEmployee = async (id) => {
   try {
     const token = localStorage.getItem("userToken");

@@ -1,19 +1,19 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import { useEmployees } from "../../../context/EmployeeContext";
 import { useTeam } from "../../../context/TeamContext";
 import { useRole } from "../../../context/RoleContext";
 import { useAlert } from "../../../context/AlertContext";
 import { FaFileExcel, FaGoogle } from "react-icons/fa";
-import user_profile from "../../../aasests/profile-img.jpg";
-// import user_profile_bg from "../../../aasests/user-profile-bg.jpg";
+import user_profile from "../../../aasests/profile-img.jpg"
+import user_profile_bg from "../../../aasests/user-profile-bg.jpg"
 import user_profile_bg_2 from "../../../aasests/user-profile-bg-2.jpg"
-import { BarChart, Search } from "lucide-react";
+import { Edit, Save, Trash2, Loader2, Eye, BarChart, Search } from "lucide-react";
 import { SectionHeader } from '../../../components/SectionHeader';
 import { exportToExcel, importFromExcel, useImportEmployees, fetchGoogleSheetData } from "../../../components/excelUtils";
-import { CancelButton, ExportButton, SaveChangeButton, ImportButton, ClearButton, IconDeleteButton, IconEditButton, IconViewButton } from "../../../AllButtons/AllButtons";
+import { EditButton, SaveButton, CancelButton, DeleteButton, ExportButton, ImportButton, ClearButton, SaveChangeButton, IconApproveButton, IconRejectButton, IconCancelTaskButton, IconSaveButton, IconDeleteButton, IconEditButton, IconViewButton } from "../../../AllButtons/AllButtons";
 import { useNavigate } from 'react-router-dom';
 
-const EmployeeManagement = () => {
+const HREmployeemanagment = () => {
   const navigate = useNavigate();
   const { employees, loading, addEmployee, deleteEmployee, updateEmployee, error } = useEmployees();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,13 +21,12 @@ const EmployeeManagement = () => {
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [importType, setImportType] = useState(null); // Track selected import type
-  const [showImportOptions, setShowImportOptions] = useState(false);
+  const [showImportOptions, setShowImportOptions] = useState(false); // FIX: Define state
   const [filterBy, setFilterBy] = useState("name"); // Default filter by name
-  // const [importedEmployees, setImportedEmployees] = useState([]);
+  const [importedEmployees, setImportedEmployees] = useState([]);
   // const [importedData, setImportedData] = useState([]);
   const [googleSheetUrl, setGoogleSheetUrl] = useState("");
-  const { importEmployees } = useImportEmployees();
-  // const fileInputRef = useRef(null);
+  const { importEmployees } = useImportEmployees(); // ✅ Extract correctly
   // Filtering employees
   const filteredEmployees = employees.filter((employee) => {
     const value = employee[filterBy]?.toLowerCase() || "";
@@ -80,7 +79,6 @@ const EmployeeManagement = () => {
   };
 
   const handleUpdateEmployee = async () => {
-    console.log("before sending",editingEmployee);
     if (!editingEmployee) return;
 
     try {
@@ -173,17 +171,30 @@ const EmployeeManagement = () => {
 
 
   const handleViewEmployeeDetail = (employee) => {
-  
-    navigate(`/superadmin/users/${employee.id}`, { state: { employee } });
+    navigate(`/hr/users/${employee.id}`, { state: { employee } });
   };
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white !shadow-md max-h-screen overflow-y-auto">
+    <div className="rounded-2xl border border-gray-200 bg-white shadow-lg max-h-screen overflow-y-auto">
       <SectionHeader icon={BarChart} title="Employee Management" subtitle="Manage employees and update details" />
+      {/* <div className="flex justify-between items-center p-4">
+        <div className="my-2">
+          <h2 className="text-xl font-semibold text-gray-900">Employee Management</h2>
+          <p className="text-sm text-gray-600 mt-1">Manage employees and update details</p>
+        </div>
+      </div> */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 sticky top-0 bg-white z-10 shadow-md">
         {/* Add Employee Button */}
         <button onClick={openModal} className="add-items-btn">
           Add Employee
         </button>
+        {/* Add Employee Button */}
+        {/* <button
+          onClick={openModal}
+          className="add-items-btn"
+        >
+          Add Employee
+        </button> */}
+
         {/* Search & Filter */}
         <div className="flex flex-wrap md:flex-nowrap items-center gap-3 border p-2 rounded-lg shadow-md bg-white">
           {/* <input
@@ -291,13 +302,12 @@ const EmployeeManagement = () => {
                 onChange={handleImport}
                 className="px-3 py-2 border rounded-md cursor-pointer"
               />
-              {/* <button
+              <button
                 onClick={() => setImportType("")}
                 className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
               >
                 Cancel
-              </button> */}
-              <CancelButton onClick={() => setImportType("")} />
+              </button>
             </div>
 
           </div>
@@ -316,11 +326,16 @@ const EmployeeManagement = () => {
               />
               <button
                 onClick={handleGoogleSheetImport}
-                className="assign-btn items-center justify-center"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
               >
                 Import from Google Sheets
               </button>
-              <CancelButton onClick={() => setImportType("")} />
+              <button
+                onClick={() => setImportType("")}
+                className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         )}
@@ -335,7 +350,6 @@ const EmployeeManagement = () => {
               <th className="px-4 py-2 text-center">Email</th>
               <th className="px-4 py-2 text-center">Phone</th>
               <th className="px-4 py-2 text-center">Department</th>
-              <th className="px-4 py-2 text-center">Role</th>
               <th className="px-4 py-2 text-center">Actions</th>
             </tr>
           </thead>
@@ -352,19 +366,12 @@ const EmployeeManagement = () => {
               filteredEmployees.map((employee) => (
                 <tr key={employee.id} className="border-b border-gray-300 hover:bg-gray-100">
                   <td className="px-4 py-3 text-gray-900">
-                    <img
-                      className="border-2 shadow-[5px_8px_10px_-7px_rgba(128,128,128,1)] rounded-full w-12 h-12"
-                      src={employee.profile_pic ? employee.profile_pic : user_profile }
-                      alt=""
-                    />
+                    <img className="border-2 shadow-[5px_8px_10px_-7px_rgba(128,128,128,1)] rounded-full w-12 h-12" src={user_profile} alt="" />
                   </td>
                   <td className="px-4 py-3 text-gray-900 text-center">{employee.name}</td>
                   <td className="px-4 py-3 text-gray-900 text-center">{employee.email}</td>
                   <td className="px-4 py-3 text-gray-900 text-center">{employee.phone_num || "N/A"}</td>
                   <td className="px-4 py-3 text-gray-900 text-center">{employee.team || "N/A"}</td>
-                  <td className="px-4 py-3 text-gray-900 text-center">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800">{employee.roles || "N/A"}</span>
-                  </td>
                   <td className="px-4 py-3 flex gap-2 flex items-center justify-center">
                     {/* <button
                       onClick={() => handleViewEmployee(employee)}
@@ -372,15 +379,24 @@ const EmployeeManagement = () => {
                     ><Eye className="h-4 w-4 mr-1" />
                       View
                     </button> */}
-                    <IconViewButton key={employee.id} onClick={() => {
-                      if(employee.roles === "Team"){
+                    <IconViewButton key={employee.id} onClick={() => {if(employee.roles=="Team"){
                       handleViewEmployeeDetail(employee);
-                      }
                     }
-                  }
+                    else{
+                      // handleViewEmployee(employee);
+                      setSelectedEmployee(employee);
+                    }
+                    } }
 
                       />
                     <IconEditButton onClick={() => handleEditEmployee(employee)} />
+
+                    {/* <button
+                      onClick={() => handleDeleteEmployee(employee.id)}
+                      className="flex items-center space-x-2 text-base px-3 py-1 border border-red-600 text-red-600 hover:bg-red-600 hover:text-white rounded-md transition"
+                    ><Trash2 className="h-4 w-4 mr-1" />
+                      Remove
+                    </button> */}
                     <IconDeleteButton onClick={() => handleDeleteEmployee(employee.id)} />
                   </td>
                 </tr>
@@ -397,19 +413,8 @@ const EmployeeManagement = () => {
             className="absolute top-4 right-4 text-gray-500 hover:text-black">
               &times;
             </button>
-            <div className="flex flex-col justify-center items-center">
-              <h2 className="text-xl font-semibold text-center mb-4 mt-2">Employee Details</h2>
-              <img
-                className="border-2 border-[#d7d7d7] outline outline-[5px] outline-white p-[3px] shadow-[5px_12px_15px_-6px_rgba(128,128,128,1)] rounded-full w-28 h-28 cursor-pointer"
-                src={editingEmployee.profile_pic || user_profile}
-                alt={editingEmployee.name}
-              />
-                <input
-                className="relative left-14 top-4 mb-8"
-                  type="file"
-                  onChange={(e) => setEditingEmployee({ ...editingEmployee, profile_pic: e.target.files[0] })}
-                />
-            </div>
+            <h2 className="text-2xl font-semibold text-center mb-4">Employee Details</h2>
+
             {editingEmployee ? (
               <>
                 <input type="text" name="name" value={editingEmployee.name} onChange={(e) => setEditingEmployee({ ...editingEmployee, name: e.target.value })} className="border p-2 w-full mb-2" placeholder="Name" />
@@ -438,6 +443,10 @@ const EmployeeManagement = () => {
                     <option key={team.id} value={team.id}>{team.name}</option>
                   ))}
                 </select>
+
+                {/* <button onClick={handleUpdateEmployee} className="bg-blue-600 text-white px-4 py-2 rounded-md w-full hover:bg-blue-700">
+                  Save Changes
+                </button> */}
                 <SaveChangeButton onClick={handleUpdateEmployee}/>
               </>
             ) : (
@@ -445,15 +454,15 @@ const EmployeeManagement = () => {
                 <div className="user_details [#CECECE] shadow-[0px_0px_11px_-6px_grey] border rounded-[20px]">
                   <div className="flex bg-cover bg-center flex justify-center items-center p-[11px] rounded-t-[20px] flex flex-col gap-3 text-[25px]" style={{ backgroundImage: `url(${user_profile_bg_2})` }}>
                     <img className="border-2 border-[#d7d7d7] outline outline-[5px] outline-white p-[3px] shadow-[5px_12px_15px_-6px_rgba(128,128,128,1)] rounded-full w-36 h-36" src={user_profile} alt="" />
-                    <p>{selectedEmployee.name}</p>
+                    <p className=""> {/* <strong>Name:</strong>  */} {selectedEmployee.name}</p>
                   </div>
                   <div className="m-[18px] flex flex-col gap-[5px]">
-                    <p><strong>Email:</strong> {selectedEmployee.email}</p>
-                    <p><strong>Phone:</strong> {selectedEmployee.phone_num || "N/A"}</p>
-                    <p><strong>Emergency Phone:</strong> {selectedEmployee.emergency_phone_num || "N/A"}</p>
-                    <p><strong>Role:</strong> {selectedEmployee.roles || "N/A"}</p>
-                    <p><strong>Department:</strong> {selectedEmployee.team || "N/A"}</p>
-                    <p><strong>address:</strong> {selectedEmployee.address || "N/A"}</p>
+                    <p className=""><strong>Email:</strong> {selectedEmployee.email}</p>
+                    <p className=""><strong>Phone:</strong> {selectedEmployee.phone_num || "N/A"}</p>
+                    <p className=""><strong>Emergency Phone:</strong> {selectedEmployee.emergency_phone_num || "N/A"}</p>
+                    <p className=""><strong>Role:</strong> {selectedEmployee.roles || "N/A"}</p>
+                    <p className=""><strong>Department:</strong> {selectedEmployee.team || "N/A"}</p>
+                    <p className=""><strong>address:</strong> {selectedEmployee.address || "N/A"}</p>
                   </div>
                   <div className="flex items-center justify-center px-[15px] pt-[10px] pb-[22px]">
                     <button onClick={() => handleEditEmployee(selectedEmployee)} className="bg-green-600 text-white px-4 py-2 rounded-md w-full hover:bg-green-700">
@@ -467,6 +476,8 @@ const EmployeeManagement = () => {
           </div>
         </div>
       )}
+
+
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md z-50 animate-fadeIn">
@@ -548,12 +559,12 @@ const EmployeeManagement = () => {
 
 
                 {/* <input 
-                  type="text" 
-                  placeholder="Emergency Contact" 
-                  value={newEmployee.emergency_phone_num} 
-                  onChange={(e) => setNewEmployee({ ...newEmployee, emergency_phone_num: e.target.value })} 
-                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 shadow-sm" 
-                /> */}
+            type="text" 
+            placeholder="Emergency Contact" 
+            value={newEmployee.emergency_phone_num} 
+            onChange={(e) => setNewEmployee({ ...newEmployee, emergency_phone_num: e.target.value })} 
+            className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 shadow-sm" 
+          /> */}
 
                 <input
                   type="text"
@@ -563,21 +574,14 @@ const EmployeeManagement = () => {
                   className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 shadow-sm"
                 />
 
-               <select
-                  value={newEmployee.team_id ?? "NULL"} // Default to "NULL" if team_id is null or undefined
-                  onChange={(e) =>
-                    setNewEmployee({
-                      ...newEmployee,
-                      team_id: e.target.value === "NULL" ? null : e.target.value,
-                    })
-                  }
+                <select
+                  value={newEmployee.team_id}
+                  onChange={(e) => setNewEmployee({ ...newEmployee, team_id: e.target.value })}
                   className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
                 >
-                  <option value="NULL">Select Team</option>
+                  <option value="">Select Team</option>
                   {teams.map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.name}
-                    </option>
+                    <option key={team.id} value={team.id}>{team.name}</option>
                   ))}
                 </select>
 
@@ -594,12 +598,7 @@ const EmployeeManagement = () => {
 
                 <input
                   type="file"
-                  onChange={(e) =>
-                    setNewEmployee({
-                      ...newEmployee,
-                      profile_pic: e.target.files && e.target.files.length > 0 ? e.target.files[0] : null,
-                    })
-                  }
+                  onChange={(e) => setNewEmployee({ ...newEmployee, profile_pic: e.target.files[0] })}
                   className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white shadow-sm cursor-pointer"
                 />
               </div>
@@ -620,4 +619,4 @@ const EmployeeManagement = () => {
     </div>
   );
 };
-export default EmployeeManagement;
+export default HREmployeemanagment;
