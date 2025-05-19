@@ -54,6 +54,7 @@ import { AssignAccessoryProvider } from "./context/AssignAccessoryContext";
 import { Categoryelements } from "./pages/hr/Categories/Categoryelements";
 import Accessory from "./pages/employee/Accessory/Accessory";
 import { useNavigate } from "react-router-dom";
+import TeamLeaderDashoard from "./pages/Tl/TeamLeaderDashboard";
 // import EmployeeDetailHrEmployeeDetail from "./pages/hr/Employee/HrEmployeeDetail";
 const RoleBasedRoute = ({ element, allowedRoles }) => {
   // const { user } = useAuth();
@@ -72,22 +73,11 @@ const RoleBasedRoute = ({ element, allowedRoles }) => {
   return normalizedAllowedRoles.includes(userRole) ? element : <Navigate to="/" />;
 };
 
-
-
-
-
-
 const AppRoutes = () => {
   const [role, setRole] = useState(localStorage.getItem("user_name") || "");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation(); // Get current route
-
-
-
-
-
-
 
   return (
     <AlertProvider>
@@ -140,11 +130,6 @@ const AppRoutes = () => {
             }
           />
 
-
-
-
-
-
           <Route
             path="/superadmin/team"
             element={<RoleBasedRoute element={<Teamelement />} allowedRoles={["superadmin"]} />}
@@ -178,19 +163,16 @@ const AppRoutes = () => {
             }
           />
 
-          <Route
-            path="/billingmanager/dashboard"
-            element={<RoleBasedRoute element={<BDDashboard />} allowedRoles={["billingmanager"]} />}
-          />
-          <Route
+            <Route
             path="/superadmin/users/:id"
             element={<RoleBasedRoute element={<EmployeeDetail />} allowedRoles={["superadmin"]} />}
           />
 
-
-
-
-
+          <Route
+            path="/billingmanager/dashboard"
+            element={<RoleBasedRoute element={<BDDashboard />} allowedRoles={["billingmanager"]} />}
+          />
+        
           <Route
             path="/billingmanager/activity-tags"
             element={<RoleBasedRoute element={<Activityelement />} allowedRoles={["billingmanager"]} />}
@@ -269,17 +251,19 @@ const AppRoutes = () => {
 
            <Route
             path="/tl/dashboard"
-            element={<RoleBasedRoute element={<ProjectManagerDashboard />} allowedRoles={["tl"]} />}
+            element={<RoleBasedRoute element={<TeamLeaderDashoard />} allowedRoles={["tl"]} />}
           />
 
           <Route
             path="/tl/assigned"
             element={<RoleBasedRoute element={<PMassignedelement />} allowedRoles={["tl"]} />}
           />
+
           <Route
             path="/tl/assign"
             element={<RoleBasedRoute element={<AssignelementPM />} allowedRoles={["tl"]} />}
           />
+          
           <Route
             path="/tl/tasks/:project_id"
             element={
@@ -348,6 +332,30 @@ const AppRoutes = () => {
             }
           />
           <Route
+            path="/hr/employees"
+            element={<RoleBasedRoute element={<Employeelayout/>} allowedRoles={["hr"]} />}
+          />
+          <Route
+            path="/hr/users/:id"
+            element={<RoleBasedRoute element={<EmployeeDetail />} allowedRoles={["hr"]} />}
+
+            
+            
+          />
+          <Route
+            path="/hr/leaves"
+            element={
+              <LeaveProvider>
+                <RoleBasedRoute element={<LeaveManagement/>} allowedRoles={["hr"]} />
+                </LeaveProvider>
+            }
+          />
+
+           <Route
+            path="/admin/users"
+            element={<RoleBasedRoute element={<UserManagement />} allowedRoles={["admin"]} />}
+          />
+          <Route
             path="/team/dashboard"
             element={<RoleBasedRoute element={<EmployeeDashboard />} allowedRoles={["team"]} />}
           />
@@ -397,33 +405,12 @@ const AppRoutes = () => {
               </TaskProvider>
             }
           />
-          <Route
-            path="/admin/users"
-            element={<RoleBasedRoute element={<UserManagement />} allowedRoles={["admin"]} />}
-          />
-          <Route
-            path="/hr/employees"
-            element={<RoleBasedRoute element={<Employeelayout/>} allowedRoles={["hr"]} />}
-          />
-          <Route
-            path="/hr/users/:id"
-            element={<RoleBasedRoute element={<EmployeeDetail />} allowedRoles={["hr"]} />}
 
-            
-            
-          />
-          <Route
-            path="/hr/leaves"
-            element={
-              <LeaveProvider>
-                <RoleBasedRoute element={<LeaveManagement/>} allowedRoles={["hr"]} />
-                </LeaveProvider>
-            }
-          />
           <Route
             path="/team/profile"
             element={<RoleBasedRoute element={<Profile />} allowedRoles={["team"]} />}
             />
+
           </Routes>
       </div>
     </div>
